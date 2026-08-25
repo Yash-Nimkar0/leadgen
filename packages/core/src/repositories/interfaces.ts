@@ -27,11 +27,16 @@ export interface IProjectLeadRepository {
 
 export interface IProjectRepository {
   /**
-   * Returns all active projects with their keywords and sources.
+   * Returns all active projects with their real name/description/keywords/sources/
+   * competitors - the same data used to classify a lead must reflect the project
+   * that lead was actually matched against.
    */
   getActiveProjects(): Promise<Array<{
     id: string;
+    name: string;
+    productDescription: string;
     keywords: string[];
+    competitors: string[];
     sources: string[];
   }>>;
 }

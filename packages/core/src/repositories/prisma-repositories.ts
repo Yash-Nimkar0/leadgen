@@ -54,17 +54,20 @@ export class PrismaProjectLeadRepository implements IProjectLeadRepository {
 }
 
 export class PrismaProjectRepository implements IProjectRepository {
-  async getActiveProjects(): Promise<Array<{ id: string; keywords: string[]; sources: string[] }>> {
+  async getActiveProjects(): Promise<Array<{ id: string; name: string; productDescription: string; keywords: string[]; competitors: string[]; sources: string[] }>> {
     const projects = await prisma.project.findMany({
       include: {
         keywords: true,
         sources: { where: { enabled: true } }
       }
     });
-    
+
     return projects.map(p => ({
       id: p.id,
-      keywords: p.keywords.map(k => k.keyword),
+      name: p.name,
+      productDescription: p.productDescription,
+      keywords: p.keywords.filter(k => k.type !== 'COMPETITOR').map(k => k.keyword),
+      competitors: p.keywords.filter(k => k.type === 'COMPETITOR').map(k => k.keyword),
       sources: p.sources.map(s => s.sourceIdentifier)
     }));
   }

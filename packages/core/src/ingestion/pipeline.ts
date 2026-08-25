@@ -63,10 +63,10 @@ export class IngestionPipeline {
             try {
               const classification = await this.llmProvider.classify({
                 projectConfig: {
-                  name: 'Project ' + project.id, // Ideally fetched from DB
-                  description: 'Project description', // Ideally fetched from DB
+                  name: project.name,
+                  description: project.productDescription,
                   keywords: project.keywords,
-                  competitors: project.keywords // simplifying for now
+                  competitors: project.competitors
                 },
                 post: {
                   title: normalized.title,
