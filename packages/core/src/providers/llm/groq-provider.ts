@@ -25,7 +25,11 @@ export class GroqProvider implements ILLMProvider {
     // but the `openai/gpt-oss-20b` supports JSON schema natively via response_format.
     
     // We must pass the JSON schema directly.
-    const jsonSchema = zodToJsonSchema(ClassificationResultSchema);
+    // Cast the argument: ClassificationResultSchema's structural type is complex enough that
+    // TS hits its instantiation depth limit (TS2589) trying to verify it against
+    // zod-to-json-schema's ZodType parameter. Purely a type-checking limitation - this call
+    // has run correctly at runtime throughout development.
+    const jsonSchema = zodToJsonSchema(ClassificationResultSchema as any);
     if ('$schema' in jsonSchema) {
       delete (jsonSchema as any).$schema;
     }
@@ -38,7 +42,6 @@ export class GroqProvider implements ILLMProvider {
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userContent },
         ],
-        // @ts-expect-error - Some versions of groq-sdk types might lack strict schema structure mapping, but API supports it.
         response_format: { type: "json_schema", json_schema: { name: "classification", schema: jsonSchema, strict: true } },
         temperature: 0.1,
       });

@@ -21,7 +21,11 @@ export class GeminiProvider implements ILLMProvider {
     const systemPrompt = buildClassificationSystemPrompt(input.projectConfig);
     const userContent = buildClassificationUserContent(input.post);
 
-    const zodSchema = zodToJsonSchema(ClassificationResultSchema) as any;
+    // Cast the argument: ClassificationResultSchema's structural type is complex enough that
+    // TS hits its instantiation depth limit (TS2589) trying to verify it against
+    // zod-to-json-schema's ZodType parameter. Purely a type-checking limitation - this call
+    // has run correctly at runtime throughout development.
+    const zodSchema = zodToJsonSchema(ClassificationResultSchema as any) as any;
     
     const toGeminiSchema = (schema: any): Schema => {
         if (schema.type === 'object') {
