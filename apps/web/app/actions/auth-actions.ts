@@ -2,9 +2,16 @@
 
 import { prisma } from "@repo/database";
 import bcrypt from "bcryptjs";
+import { checkRateLimit, getClientIp, rateLimitMessage } from "../../lib/rate-limit";
 
 export async function registerUser(email: string, passwordPlain: string) {
   try {
+    const ip = await getClientIp();
+    const rateLimit = await checkRateLimit(ip, "REGISTER");
+    if (!rateLimit.allowed) {
+      return { error: rateLimitMessage(rateLimit.retryAfterSeconds!) };
+    }
+
     if (!email || !passwordPlain) {
       return { error: "Email and password are required" };
     }
@@ -14,7 +21,7 @@ export async function registerUser(email: string, passwordPlain: string) {
     }
 
     const emailLower = email.toLowerCase();
-    
+
     // Check for existing user
     const existing = await prisma.user.findUnique({
       where: { email: emailLower }

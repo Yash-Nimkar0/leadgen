@@ -60,6 +60,20 @@ enum IngestionRunStatus {
   FAILED
 }
 
+enum RateLimitAction {
+  LOGIN
+  REGISTER
+}
+
+model RateLimitAttempt {
+  id         String           @id @default(uuid())
+  identifier String
+  action     RateLimitAction
+  createdAt  DateTime         @default(now())
+
+  @@index([identifier, action, createdAt])
+}
+
 model User {
   id          String           @id @default(uuid())
   email       String           @unique

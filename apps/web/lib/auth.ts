@@ -2,6 +2,7 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "@repo/database";
 import bcrypt from "bcryptjs";
+import { checkRateLimit, getClientIp, rateLimitMessage } from "./rate-limit";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -16,8 +17,21 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Invalid credentials");
         }
 
+        const emailLower = credentials.email.toLowerCase();
+        const ip = await getClientIp();
+
+        const ipLimit = await checkRateLimit(ip, "LOGIN");
+        if (!ipLimit.allowed) {
+          throw new Error(rateLimitMessage(ipLimit.retryAfterSeconds!));
+        }
+
+        const emailLimit = await checkRateLimit(`email:${emailLower}`, "LOGIN");
+        if (!emailLimit.allowed) {
+          throw new Error(rateLimitMessage(emailLimit.retryAfterSeconds!));
+        }
+
         const user = await prisma.user.findUnique({
-          where: { email: credentials.email.toLowerCase() }
+          where: { email: emailLower }
         });
 
         if (!user) {
