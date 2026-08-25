@@ -1,0 +1,118 @@
+{
+  "AI_SUPPORT_ACTIVE": {
+    "relevance": 100,
+    "commercialIntent": 100,
+    "intentType": "ACTIVE_PURCHASE",
+    "problemSummary": "The user is spending $500/month on Intercom, finds it too expensive, and is ready to buy a cheaper AI support tool today.",
+    "matchedKeywords": [
+      "support"
+    ],
+    "matchedCompetitors": [
+      "Intercom"
+    ],
+    "buyingStage": "Most Aware",
+    "summary": "A SaaS team is looking to immediately replace Intercom due to high costs and is ready to purchase an alternative today.",
+    "whyItMatters": "This is a high-intent prospect actively looking to replace a named competitor and ready to buy immediately, making it a prime opportunity for Acme AI Support outreach.",
+    "recommendedPriority": "HIGH"
+  },
+  "AI_SUPPORT_PROB": {
+    "relevance": 95,
+    "commercialIntent": 40,
+    "intentType": "PROBLEM_AWARE",
+    "problemSummary": "The poster is experiencing a high volume of repetitive customer support tickets which is exhausting their team and causing manual bottlenecks.",
+    "matchedKeywords": [
+      "support",
+      "customer service"
+    ],
+    "matchedCompetitors": [],
+    "buyingStage": "Problem Aware",
+    "summary": "An entrepreneur is complaining about overwhelming ticket volumes and manual customer support work.",
+    "whyItMatters": "This is a direct pain point that Acme AI Support solves, representing an opportunity to engage early before they actively start searching for helpdesk tools.",
+    "recommendedPriority": "MEDIUM"
+  },
+  "DEVOPS_REC": {
+    "relevance": 95,
+    "commercialIntent": 65,
+    "intentType": "RECOMMENDATION_REQUEST",
+    "problemSummary": "The user is experiencing performance and cost issues with GitHub Actions on a large JavaScript monorepo and is asking for recommendations for alternative CI/CD platforms.",
+    "matchedKeywords": [
+      "ci/cd",
+      "deployment",
+      "pipeline"
+    ],
+    "matchedCompetitors": [
+      "GitHub Actions"
+    ],
+    "buyingStage": "Solution Aware",
+    "summary": "The author is looking for recommendations for a CI/CD platform optimized for JavaScript monorepos because GitHub Actions has become too slow and expensive.",
+    "whyItMatters": "This is a direct recommendation request from a user actively looking to replace or supplement an incumbent competitor (GitHub Actions) due to specific pain points that Acme CI/CD addresses.",
+    "recommendedPriority": "HIGH"
+  },
+  "DEVOPS_RESEARCH": {
+    "relevance": 45,
+    "commercialIntent": 15,
+    "intentType": "SOLUTION_RESEARCH",
+    "problemSummary": "The user is researching how to manage secrets in Kubernetes and exploring the landscape between HashiCorp Vault and AWS Secrets Manager.",
+    "matchedKeywords": [],
+    "matchedCompetitors": [],
+    "buyingStage": "Solution Aware",
+    "summary": "A user is conducting landscape research comparing HashiCorp Vault and AWS Secrets Manager for Kubernetes secrets management.",
+    "whyItMatters": "While it touches the broader technical ecosystem and touches adjacent security workflows, it does not explicitly mention CI/CD, pipelines, or deployments.",
+    "recommendedPriority": "LOW"
+  },
+  "IRRELEVANT_2": {
+    "relevance": 0,
+    "commercialIntent": 0,
+    "intentType": "LOW_VALUE",
+    "problemSummary": "Spam post offering SEO backlinks.",
+    "matchedKeywords": [],
+    "matchedCompetitors": [],
+    "buyingStage": "Unaware",
+    "summary": "An unsolicited promotional spam post attempting to sell SEO backlinks.",
+    "whyItMatters": "It contains pure spam and has no commercial or contextual value to an email marketing platform.",
+    "recommendedPriority": "LOW"
+  },
+  "NOISE_RANT": {
+    "relevance": 10,
+    "commercialIntent": 0,
+    "intentType": "PASSIVE_DISCUSSION",
+    "problemSummary": "Generic industry-wide complaint about the rising cost of software subscriptions compared to past pricing models.",
+    "matchedKeywords": [],
+    "matchedCompetitors": [],
+    "buyingStage": "Unaware",
+    "summary": "The user complains about general software subscription pricing models and the shift away from perpetual licenses.",
+    "whyItMatters": "It does not provide any actionable commercial intent or relevance to the product, representing only broad industry venting.",
+    "recommendedPriority": "LOW"
+  },
+  "LOW_VALUE_QUESTION": {
+    "relevance": 0,
+    "commercialIntent": 0,
+    "intentType": "LOW_VALUE",
+    "problemSummary": "The user is asking for the definition of the acronym B2B.",
+    "matchedKeywords": [],
+    "matchedCompetitors": [],
+    "buyingStage": "Unaware",
+    "summary": "A user asks for the meaning of the acronym B2B on a SaaS subreddit.",
+    "whyItMatters": "This is a basic definitional question with no commercial intent or relevance to the product.",
+    "recommendedPriority": "LOW"
+  },
+  "SEC_RESEARCH": {
+    "relevance": 100,
+    "commercialIntent": 40,
+    "intentType": "SOLUTION_RESEARCH",
+    "problemSummary": "Startup needs SOC2 Type 2 compliance by Q3 and is researching pros and cons of major compliance automation tools.",
+    "matchedKeywords": [
+      "soc2",
+      "compliance"
+    ],
+    "matchedCompetitors": [
+      "Vanta",
+      "Drata",
+      "Secureframe"
+    ],
+    "buyingStage": "Solution Aware",
+    "summary": "A startup founder is researching and asking for pros/cons of Vanta, Drata, and Secureframe to achieve SOC2 Type 2 by Q3.",
+    "whyItMatters": "The user is actively evaluating all of the primary direct competitors for Acme Security and needs to achieve compliance under a deadline, representing an ideal target audience for comparison and positioning.",
+    "recommendedPriority": "HIGH"
+  }
+}

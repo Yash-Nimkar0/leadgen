@@ -1,0 +1,293 @@
+{
+  "AI_SUPPORT_ACTIVE": {
+    "relevance": 85,
+    "commercialIntent": 95,
+    "intentType": "RECOMMENDATION_REQUEST",
+    "problemSummary": "User finds Intercom too expensive and seeks a cheaper AI support alternative.",
+    "matchedKeywords": [
+      "support"
+    ],
+    "matchedCompetitors": [
+      "Intercom"
+    ],
+    "buyingStage": "Most Aware",
+    "summary": "User is looking for a cheaper AI support tool to replace Intercom, citing high cost and readiness to purchase.",
+    "whyItMatters": "User is actively seeking a cheaper AI support solution, indicating potential interest in Acme AI Support.",
+    "recommendedPriority": "HIGH"
+  },
+  "AI_SUPPORT_ALT": {
+    "relevance": 60,
+    "commercialIntent": 70,
+    "intentType": "ALTERNATIVE_SEEKING",
+    "problemSummary": "Zendesk feels bloated; seeking modern alternatives for a 5-person support team.",
+    "matchedKeywords": [
+      "support"
+    ],
+    "matchedCompetitors": [
+      "Zendesk"
+    ],
+    "buyingStage": "Solution Research",
+    "summary": "User is asking for modern alternatives to Zendesk for a small support team.",
+    "whyItMatters": "The post indicates a need for a more efficient support solution, aligning with Acme AI Support's value proposition for SaaS companies.",
+    "recommendedPriority": "MEDIUM"
+  },
+  "AI_SUPPORT_PROB": {
+    "relevance": 85,
+    "commercialIntent": 65,
+    "intentType": "SOLUTION_RESEARCH",
+    "problemSummary": "Ticket volume is too high and the team is exhausted from manually answering repetitive questions.",
+    "matchedKeywords": [
+      "support"
+    ],
+    "matchedCompetitors": [],
+    "buyingStage": "Problem Aware",
+    "summary": "The user is overwhelmed by high ticket volume and repetitive manual responses, looking for a solution.",
+    "whyItMatters": "Acme AI Support can automate repetitive support queries, reduce ticket volume, and relieve team exhaustion.",
+    "recommendedPriority": "HIGH"
+  },
+  "CRM_COMPARE": {
+    "relevance": 90,
+    "commercialIntent": 85,
+    "intentType": "RECOMMENDATION_REQUEST",
+    "problemSummary": "Outgrowing spreadsheets and needing a real CRM",
+    "matchedKeywords": [
+      "crm"
+    ],
+    "matchedCompetitors": [
+      "HubSpot",
+      "Salesforce"
+    ],
+    "buyingStage": "Product Aware",
+    "summary": "A 20-person startup is outgrowing spreadsheets and is comparing HubSpot and Salesforce to find a suitable CRM.",
+    "whyItMatters": "The user is actively evaluating CRM options and is ready to purchase, making them a prime candidate for outreach with Acme CRM.",
+    "recommendedPriority": "HIGH"
+  },
+  "CRM_COMPLAINT": {
+    "relevance": 60,
+    "commercialIntent": 70,
+    "intentType": "COMPETITOR_DISSATISFACTION",
+    "problemSummary": "Pipedrive’s new UI update is causing performance issues and slowing down the team.",
+    "matchedKeywords": [],
+    "matchedCompetitors": [
+      "Pipedrive"
+    ],
+    "buyingStage": "Solution Aware",
+    "summary": "User complains about Pipedrive’s new UI update causing slowdown and is considering moving to another solution.",
+    "whyItMatters": "The post highlights dissatisfaction with a competitor, indicating a potential opportunity to position Acme CRM as a smoother, more reliable alternative for sales teams.",
+    "recommendedPriority": "MEDIUM"
+  },
+  "DEVOPS_REC": {
+    "relevance": 90,
+    "commercialIntent": 85,
+    "intentType": "RECOMMENDATION_REQUEST",
+    "problemSummary": "GitHub Actions is too slow/expensive for a massive monorepo.",
+    "matchedKeywords": [
+      "ci/cd"
+    ],
+    "matchedCompetitors": [
+      "GitHub Actions"
+    ],
+    "buyingStage": "Problem Aware",
+    "summary": "User seeks a CI/CD tool for a large monorepo, dissatisfied with GitHub Actions due to speed and cost, asking for best platforms optimized for JS monorepos.",
+    "whyItMatters": "The post targets CI/CD solutions for monorepos, directly aligning with Acme CI/CD’s core offering.",
+    "recommendedPriority": "HIGH"
+  },
+  "DEVOPS_RESEARCH": {
+    "relevance": 5,
+    "commercialIntent": 5,
+    "intentType": "RECOMMENDATION_REQUEST",
+    "problemSummary": "Looking for best practices for handling secrets in Kubernetes, comparing HashiCorp Vault vs AWS Secrets Manager.",
+    "matchedKeywords": [],
+    "matchedCompetitors": [],
+    "buyingStage": "Problem Aware",
+    "summary": "User is researching how to properly handle secrets in Kubernetes and asking about HashiCorp Vault vs AWS Secrets Manager.",
+    "whyItMatters": "The post indicates interest in secure deployment practices, but does not directly relate to Acme CI/CD’s core CI/CD pipeline features, so it has minimal relevance for outreach.",
+    "recommendedPriority": "LOW"
+  },
+  "MKT_ACTIVE": {
+    "relevance": 85,
+    "commercialIntent": 90,
+    "intentType": "COMPETITOR_DISSATISFACTION",
+    "problemSummary": "Mailchimp suspended account; urgent need to send newsletter tomorrow with robust Node JS API.",
+    "matchedKeywords": [
+      "email",
+      "newsletter",
+      "marketing"
+    ],
+    "matchedCompetitors": [
+      "Mailchimp"
+    ],
+    "buyingStage": "Solution Aware",
+    "summary": "User's Mailchimp account suspended; needs an email marketing tool with robust Node JS API to send a newsletter tomorrow.",
+    "whyItMatters": "Shows urgent need for an email marketing platform; indicates dissatisfaction with competitor and high likelihood of conversion.",
+    "recommendedPriority": "HIGH"
+  },
+  "ANALYTICS_PROB": {
+    "relevance": 80,
+    "commercialIntent": 85,
+    "intentType": "RECOMMENDATION_REQUEST",
+    "problemSummary": "Broken reporting and confusion with GA4 custom events after migrating from Universal Analytics.",
+    "matchedKeywords": [
+      "analytics",
+      "tracking",
+      "events"
+    ],
+    "matchedCompetitors": [
+      "GA4"
+    ],
+    "buyingStage": "Problem Aware",
+    "summary": "User is frustrated with GA4’s complexity after migrating from Universal Analytics and is looking for a simpler analytics tool for their SaaS startup.",
+    "whyItMatters": "Acme Analytics offers a simple, SaaS‑focused analytics platform that directly addresses the user’s pain points with GA4 complexity and broken reporting.",
+    "recommendedPriority": "HIGH"
+  },
+  "DEV_PASSIVE": {
+    "relevance": 80,
+    "commercialIntent": 25,
+    "intentType": "RECOMMENDATION_REQUEST",
+    "problemSummary": null,
+    "matchedKeywords": [],
+    "matchedCompetitors": [
+      "Redux",
+      "Zustand",
+      "Jotai"
+    ],
+    "buyingStage": "Solution Research",
+    "summary": "User asks what state management libraries people use in React, mentioning Redux, Zustand, and Jotai.",
+    "whyItMatters": "Shows interest in state management solutions, indicating potential for outreach to promote Acme React State.",
+    "recommendedPriority": "MEDIUM"
+  },
+  "ECOM_REC": {
+    "relevance": 90,
+    "commercialIntent": 80,
+    "intentType": "ALTERNATIVE_SEEKING",
+    "problemSummary": "Shopify's B2B features are lacking; need complex pricing tiers and net-30 terms.",
+    "matchedKeywords": [
+      "b2b"
+    ],
+    "matchedCompetitors": [
+      "Shopify"
+    ],
+    "buyingStage": "Solution Aware",
+    "summary": "User seeks a B2B e-commerce platform alternative to Shopify, needing complex pricing tiers and net-30 terms within a $1k/month budget.",
+    "whyItMatters": "This post indicates a potential customer looking for a B2B platform with advanced pricing and payment terms, aligning with Acme B2B Commerce's core features.",
+    "recommendedPriority": "HIGH"
+  },
+  "DESIGN_COMP": {
+    "relevance": 80,
+    "commercialIntent": 55,
+    "intentType": "ALTERNATIVE_SEEKING",
+    "problemSummary": "Migrating a mid-sized design agency from Figma to Penpot.",
+    "matchedKeywords": [
+      "design",
+      "ui"
+    ],
+    "matchedCompetitors": [
+      "Figma",
+      "Penpot"
+    ],
+    "buyingStage": "Solution Aware",
+    "summary": "The user is asking if anyone has successfully migrated a mid-sized design agency from Figma to Penpot, indicating interest in open source design tools.",
+    "whyItMatters": "This post shows that the user is exploring open source alternatives to Figma, indicating potential interest in Acme Design as a collaborative design tool for agencies.",
+    "recommendedPriority": "MEDIUM"
+  },
+  "PROD_PROB": {
+    "relevance": 85,
+    "commercialIntent": 70,
+    "intentType": "RECOMMENDATION_REQUEST",
+    "problemSummary": "Jira is too heavy and consumes too much time on ticket management.",
+    "matchedKeywords": [
+      "project management",
+      "tickets"
+    ],
+    "matchedCompetitors": [
+      "Jira"
+    ],
+    "buyingStage": "Solution Aware",
+    "summary": "Team of 5 devs finds Jira too heavy, wants a lighter project management tool.",
+    "whyItMatters": "This user is looking for a lightweight PM tool for a small dev team, aligning with Acme Projects' target audience and product strengths.",
+    "recommendedPriority": "HIGH"
+  },
+  "IRRELEVANT_1": {
+    "relevance": 0,
+    "commercialIntent": 0,
+    "intentType": "IRRELEVANT",
+    "problemSummary": null,
+    "matchedKeywords": [],
+    "matchedCompetitors": [
+      "Intercom"
+    ],
+    "buyingStage": "Unaware",
+    "summary": "User posts a joke about a puppy named Intercom.",
+    "whyItMatters": "No relevance to Acme AI Support; no commercial intent.",
+    "recommendedPriority": "LOW"
+  },
+  "IRRELEVANT_2": {
+    "relevance": 0,
+    "commercialIntent": 0,
+    "intentType": "PASSIVE_DISCUSSION",
+    "problemSummary": null,
+    "matchedKeywords": [],
+    "matchedCompetitors": [],
+    "buyingStage": "Unaware",
+    "summary": "User is promoting cheap SEO backlink packages, unrelated to email marketing.",
+    "whyItMatters": "This post is irrelevant to Acme Marketing's target audience and product.",
+    "recommendedPriority": "LOW"
+  },
+  "NOISE_RANT": {
+    "relevance": 5,
+    "commercialIntent": 10,
+    "intentType": "IRRELEVANT",
+    "problemSummary": null,
+    "matchedKeywords": [],
+    "matchedCompetitors": [],
+    "buyingStage": "Unaware",
+    "summary": "The user complains about high software pricing and reminisces about buying CDs, with no mention of React or state management.",
+    "whyItMatters": "This post does not discuss or imply interest in a React state management library, so it is not relevant for outreach.",
+    "recommendedPriority": "LOW"
+  },
+  "LOW_VALUE_QUESTION": {
+    "relevance": 0,
+    "commercialIntent": 0,
+    "intentType": "PASSIVE_DISCUSSION",
+    "problemSummary": null,
+    "matchedKeywords": [],
+    "matchedCompetitors": [],
+    "buyingStage": "Unaware",
+    "summary": "User asks for definition of B2B acronym.",
+    "whyItMatters": "The post does not mention or imply interest in Acme CRM or related sales tools.",
+    "recommendedPriority": "LOW"
+  },
+  "SEC_RESEARCH": {
+    "relevance": 90,
+    "commercialIntent": 85,
+    "intentType": "RECOMMENDATION_REQUEST",
+    "problemSummary": "Startup needs to achieve SOC2 Type 2 compliance by Q3.",
+    "matchedKeywords": [
+      "soc2",
+      "compliance"
+    ],
+    "matchedCompetitors": [
+      "Vanta",
+      "Drata",
+      "Secureframe"
+    ],
+    "buyingStage": "Solution Aware",
+    "summary": "Startup asking for pros and cons of Vanta, Drata, and Secureframe to meet SOC2 Type 2 deadline.",
+    "whyItMatters": "The post signals a startup with a compliance deadline, directly aligning with Acme Security’s SOC2 automation offering.",
+    "recommendedPriority": "HIGH"
+  },
+  "SEC_ACTIVE": {
+    "relevance": 60,
+    "commercialIntent": 90,
+    "intentType": "RECOMMENDATION_REQUEST",
+    "problemSummary": "Massive L7 botnet attack, Cloudflare free tier insufficient, need enterprise WAF deployable quickly.",
+    "matchedKeywords": [
+      "waf"
+    ],
+    "matchedCompetitors": [],
+    "buyingStage": "Solution Aware",
+    "summary": "User urgently needs an enterprise WAF to block L7 botnet attacks, Cloudflare free tier not enough, budget approved.",
+    "whyItMatters": "The post signals a security pain point that Acme Security can address through its automation platform, offering a chance to introduce complementary security solutions.",
+    "recommendedPriority": "HIGH"
+  }
+}

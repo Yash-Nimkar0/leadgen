@@ -1,0 +1,37 @@
+{
+  "name": "web",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3000",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint . --max-warnings 100",
+    "check-types": "next typegen && tsc --noEmit"
+  },
+  "dependencies": {
+    "@repo/ui": "*",
+    "bcrypt": "^6.0.0",
+    "lucide-react": "^1.33.0",
+    "next": "16.3.0",
+    "next-auth": "^4.24.15",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+    "use-debounce": "^10.1.1"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.62.1",
+    "@repo/eslint-config": "*",
+    "@repo/typescript-config": "*",
+    "@types/bcrypt": "^6.0.0",
+    "@types/node": "^22.15.3",
+    "@types/react": "19.2.2",
+    "@types/react-dom": "19.2.2",
+    "autoprefixer": "^10.5.4",
+    "eslint": "^9.39.1",
+    "postcss": "^8.5.26",
+    "tailwindcss": "^3.4.19",
+    "typescript": "5.9.2"
+  }
+}

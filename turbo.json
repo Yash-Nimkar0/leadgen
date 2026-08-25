@@ -1,0 +1,28 @@
+{
+  "$schema": "https://turborepo.dev/schema.json",
+  "ui": "tui",
+  "globalEnv": ["NODE_ENV", "OPENAI_API_KEY", "AUTH_SECRET", "REDDIT_LIVE_ENABLED", "REDDIT_AUTHORIZED", "REDDIT_USER_AGENT", "REDDIT_ACCESS_TOKEN", "NEXT_PUBLIC_APP_URL", "OPENAI_MODEL", "RESEND_API_KEY", "EMAIL_FROM", "TEST_EMAIL", "GEMINI_API_KEY", "GEMINI_MODEL", "GEMINI_EVAL_DELAY_MS", "LLM_PRIMARY_PROVIDER", "LLM_FALLBACK_PROVIDERS", "LLM_ROUTING_POLICY", "GROQ_API_KEY", "GROQ_MODEL", "XAI_API_KEY", "XAI_MODEL"],
+  "tasks": {
+    "generate": {
+      "cache": false
+    },
+    "build": {
+      "dependsOn": ["^build", "^generate"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**", "!.next/dev/**"]
+    },
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
+    "typecheck": {
+      "dependsOn": ["^typecheck"]
+    },
+    "check-types": {
+      "dependsOn": ["^check-types"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    }
+  }
+}

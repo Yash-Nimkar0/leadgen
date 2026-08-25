@@ -1,0 +1,47 @@
+{
+  "successfulSearch": {
+    "kind": "Listing",
+    "data": {
+      "after": "t3_afterid",
+      "dist": 2,
+      "children": [
+        {
+          "kind": "t3",
+          "data": {
+            "id": "12345",
+            "title": "Need a good solution for API billing",
+            "selftext": "We are struggling with Stripe usage billing.",
+            "author": "dev_founder",
+            "subreddit": "SaaS",
+            "created_utc": 1690000000,
+            "permalink": "/r/SaaS/comments/12345/need_a_good_solution/"
+          }
+        },
+        {
+          "kind": "t3",
+          "data": {
+            "id": "67890",
+            "title": "Thoughts on Chargebee?",
+            "selftext": "Is Chargebee good for b2b SaaS?",
+            "author": "saas_guy",
+            "subreddit": "SaaS",
+            "created_utc": 1690000100,
+            "permalink": "/r/SaaS/comments/67890/thoughts_on_chargebee/"
+          }
+        }
+      ]
+    }
+  },
+  "emptySearch": {
+    "kind": "Listing",
+    "data": {
+      "after": null,
+      "dist": 0,
+      "children": []
+    }
+  },
+  "malformedData": {
+    "error": 404,
+    "message": "Not Found"
+  }
+}

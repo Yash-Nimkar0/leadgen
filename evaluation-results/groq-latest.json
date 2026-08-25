@@ -1,0 +1,51 @@
+{
+  "AI_SUPPORT_ACTIVE": {
+    "relevance": 90,
+    "commercialIntent": 95,
+    "intentType": "ACTIVE_PURCHASE",
+    "problemSummary": "High cost of Intercom leading to need for a cheaper alternative.",
+    "matchedKeywords": [
+      "support"
+    ],
+    "matchedCompetitors": [
+      "Intercom"
+    ],
+    "buyingStage": "Most Aware",
+    "summary": "User is looking for a cheaper AI support tool to replace Intercom and is ready to buy today.",
+    "whyItMatters": "The user is actively seeking a replacement for Intercom, a direct competitor, and has expressed immediate buying intent, indicating a high opportunity for outreach.",
+    "recommendedPriority": "HIGH"
+  },
+  "AI_SUPPORT_ALT": {
+    "relevance": 70,
+    "commercialIntent": 40,
+    "intentType": "ALTERNATIVE_SEEKING",
+    "problemSummary": "Zendesk feels bloated for a 5-person support team; user seeks modern alternatives.",
+    "matchedKeywords": [
+      "support"
+    ],
+    "matchedCompetitors": [
+      "Zendesk"
+    ],
+    "buyingStage": "Solution Aware",
+    "summary": "User is asking for modern alternatives to Zendesk for a small support team, indicating dissatisfaction with Zendesk's bloat.",
+    "whyItMatters": "The post signals a potential shift away from Zendesk, a competitor, and opens an opportunity to position Acme AI Support as a suitable replacement for small SaaS teams.",
+    "recommendedPriority": "MEDIUM"
+  },
+  "DESIGN_COMP": {
+    "relevance": 90,
+    "commercialIntent": 30,
+    "intentType": "COMPARISON",
+    "problemSummary": "Migrating a mid-sized design agency from Figma to Penpot",
+    "matchedKeywords": [
+      "design"
+    ],
+    "matchedCompetitors": [
+      "Figma",
+      "Penpot"
+    ],
+    "buyingStage": "Solution Aware",
+    "summary": "The poster is asking whether a mid‑sized design agency can successfully migrate from Figma to Penpot, effectively comparing the two tools for agency work.",
+    "whyItMatters": "The post signals a design agency’s interest in open‑source alternatives to Figma, indicating potential demand for Acme Design’s collaborative design platform as a viable replacement or complement.",
+    "recommendedPriority": "HIGH"
+  }
+}

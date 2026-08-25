@@ -1,0 +1,35 @@
+{
+  "ECOM_REC": {
+    "relevance": 90,
+    "commercialIntent": 60,
+    "intentType": "ALTERNATIVE_SEEKING",
+    "problemSummary": "Shopify’s B2B features are insufficient; the user needs complex pricing tiers and net‑30 payment terms.",
+    "matchedKeywords": [
+      "b2b"
+    ],
+    "matchedCompetitors": [
+      "Shopify"
+    ],
+    "buyingStage": "Solution Aware",
+    "summary": "User is looking for Shopify alternatives for B2B, needing complex pricing tiers and net‑30 terms, with a $1k/mo budget.",
+    "whyItMatters": "The user’s requirement for advanced pricing and payment terms directly aligns with Acme B2B Commerce’s core capabilities, indicating a strong fit and potential conversion opportunity.",
+    "recommendedPriority": "HIGH"
+  },
+  "DESIGN_COMP": {
+    "relevance": 85,
+    "commercialIntent": 60,
+    "intentType": "COMPARISON",
+    "problemSummary": "Migrating a mid-sized design agency from Figma to Penpot.",
+    "matchedKeywords": [
+      "design"
+    ],
+    "matchedCompetitors": [
+      "Figma",
+      "Penpot"
+    ],
+    "buyingStage": "Solution Aware",
+    "summary": "The user is comparing Figma and Penpot for agency work and wants migration success stories.",
+    "whyItMatters": "Shows agency interest in collaborative design tools and potential adoption of Acme Design.",
+    "recommendedPriority": "MEDIUM"
+  }
+}
