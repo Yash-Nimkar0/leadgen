@@ -101,6 +101,12 @@ export default async function LeadsPage({
         
         <div className="flex items-center gap-2">
           <Link
+            href={`/projects/${projectId}/test-post`}
+            className="inline-flex items-center justify-center rounded-md border border-border bg-background px-3 py-1.5 text-sm font-medium shadow-sm transition-colors hover:bg-muted"
+          >
+            Test a Post
+          </Link>
+          <Link
             href={`/projects/${projectId}/settings`}
             className="inline-flex items-center justify-center rounded-md border border-border bg-background px-3 py-1.5 text-sm font-medium shadow-sm transition-colors hover:bg-muted"
           >
