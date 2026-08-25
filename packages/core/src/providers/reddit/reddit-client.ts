@@ -1,8 +1,9 @@
 import { RedditAuthError, RedditRateLimitError, RedditServerError, RedditTimeoutError, RedditProviderError } from './reddit-errors';
+import { RedditTokenManager } from './reddit-auth';
 
 export interface RedditClientConfig {
   userAgent: string;
-  accessToken?: string;
+  tokenManager: RedditTokenManager;
 }
 
 /**
@@ -13,6 +14,19 @@ export class RedditClient {
   constructor(private config: RedditClientConfig) {}
 
   async get(url: string, params?: Record<string, string>): Promise<any> {
+    try {
+      return await this.doRequest(url, params, false);
+    } catch (error) {
+      // A cached token can be rejected server-side before our tracked expiry
+      // (e.g. revoked). Retry exactly once with a forced refresh.
+      if (error instanceof RedditAuthError) {
+        return await this.doRequest(url, params, true);
+      }
+      throw error;
+    }
+  }
+
+  private async doRequest(url: string, params: Record<string, string> | undefined, forceRefresh: boolean): Promise<any> {
     const urlObj = new URL(url);
     if (params) {
       Object.entries(params).forEach(([key, value]) => {
@@ -20,13 +34,11 @@ export class RedditClient {
       });
     }
 
+    const token = forceRefresh ? await this.config.tokenManager.refresh() : await this.config.tokenManager.getToken();
     const headers: Record<string, string> = {
       'User-Agent': this.config.userAgent,
+      Authorization: `Bearer ${token}`,
     };
-
-    if (this.config.accessToken) {
-      headers['Authorization'] = `Bearer ${this.config.accessToken}`;
-    }
 
     let response: Response;
     const controller = new AbortController();

@@ -1,29 +1,44 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { RedditProvider } from '../reddit-provider';
 import { RedditClient } from '../reddit-client';
+import { RedditTokenManager } from '../reddit-auth';
 import { mapRedditSearchResponse, mapRedditPost } from '../reddit-mapper';
 import { RedditAuthError, RedditRateLimitError, RedditServerError, RedditTimeoutError } from '../reddit-errors';
 import * as fixtures from './fixtures.json';
+
+function fakeTokenManager(): RedditTokenManager {
+  const tm = Object.create(RedditTokenManager.prototype) as RedditTokenManager;
+  tm.getToken = vi.fn().mockResolvedValue('fake-token');
+  (tm as any).refresh = vi.fn().mockResolvedValue('fake-token');
+  return tm;
+}
 
 describe('RedditProvider Architecture', () => {
   beforeEach(() => {
     vi.unstubAllEnvs();
     process.env.REDDIT_LIVE_ENABLED = 'true';
     process.env.REDDIT_AUTHORIZED = 'true';
+    process.env.REDDIT_CLIENT_ID = 'test-client-id';
+    process.env.REDDIT_CLIENT_SECRET = 'test-client-secret';
   });
 
   describe('Authorization Gate', () => {
     it('throws if REDDIT_LIVE_ENABLED is not true', () => {
       process.env.REDDIT_LIVE_ENABLED = 'false';
-      expect(() => new RedditProvider()).toThrow('Live Reddit ingestion is disabled because commercial authorization has not been configured.');
+      expect(() => new RedditProvider()).toThrow('Live Reddit ingestion is disabled');
     });
 
     it('throws if REDDIT_AUTHORIZED is not true', () => {
       process.env.REDDIT_AUTHORIZED = 'false';
-      expect(() => new RedditProvider()).toThrow('Live Reddit ingestion is disabled because commercial authorization has not been configured.');
+      expect(() => new RedditProvider()).toThrow('Live Reddit ingestion is disabled');
     });
 
-    it('initializes if both flags are true', () => {
+    it('throws if REDDIT_CLIENT_ID/SECRET are missing', () => {
+      delete process.env.REDDIT_CLIENT_ID;
+      expect(() => new RedditProvider()).toThrow('REDDIT_CLIENT_ID and REDDIT_CLIENT_SECRET are required');
+    });
+
+    it('initializes if flags and credentials are set', () => {
       expect(() => new RedditProvider()).not.toThrow();
     });
   });
@@ -68,7 +83,7 @@ describe('RedditProvider Architecture', () => {
         status: 401,
       });
 
-      const client = new RedditClient({ userAgent: 'test' });
+      const client = new RedditClient({ userAgent: 'test', tokenManager: fakeTokenManager() });
       await expect(client.get('http://test')).rejects.toThrow(RedditAuthError);
     });
 
@@ -81,7 +96,7 @@ describe('RedditProvider Architecture', () => {
         })
       });
 
-      const client = new RedditClient({ userAgent: 'test' });
+      const client = new RedditClient({ userAgent: 'test', tokenManager: fakeTokenManager() });
       try {
         await client.get('http://test');
         expect.fail('Should have thrown');
@@ -97,7 +112,7 @@ describe('RedditProvider Architecture', () => {
         status: 503,
       });
 
-      const client = new RedditClient({ userAgent: 'test' });
+      const client = new RedditClient({ userAgent: 'test', tokenManager: fakeTokenManager() });
       await expect(client.get('http://test')).rejects.toThrow(RedditServerError);
     });
   });

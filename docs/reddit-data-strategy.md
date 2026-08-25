@@ -1,8 +1,12 @@
 # Reddit Data Strategy & Compliance
 
-**Status as of Implementation Date:**
-- **Live Ingestion**: DISABLED
-- **Commercial Authorization**: PENDING / NOT AUTHORIZED
+**Status:**
+- **Live Ingestion**: Code is built and ready (`RedditProvider`, opt-in via `REDDIT_LIVE_ENABLED`/
+  `REDDIT_AUTHORIZED` + credentials, using Reddit's free/non-commercial developer tier - see
+  `packages/core/src/providers/reddit/`), but **currently blocked at the account level** - see
+  Section 8. No credentials have been obtained; live ingestion has never actually run.
+- **Commercial Authorization**: PENDING / NOT AUTHORIZED. Required before this product can be
+  operated as a paid or public service using Reddit data - see Section 5.
 
 ## 1. Current Reddit Developer Terms
 Reddit's Developer Terms establish strict rules regarding accessing their Services/Data. Standard developer accounts (using standard OAuth/Script apps) are generally intended for non-commercial, hobbyist, or academic use, or for creating non-monetized utilities for Reddit users.
@@ -35,5 +39,35 @@ The Reddit adapter and our database must adhere to standard terms that include:
 - Not indefinitely storing raw Reddit content if it is no longer necessary for the core functionality of the app. 
 - *Current Architecture Impact*: We currently store a normalized `RedditPost` and our `Analysis`. When scaling live data, we will need to implement a retention policy (e.g., pruning posts older than X days or syncing deletions) to remain compliant.
 
-## What remains before Phase 7B
-We require an authorized path (an approved OAuth client or Enterprise API contract) before we can change `REDDIT_LIVE_ENABLED=true` and `REDDIT_AUTHORIZED=true`. Until then, the application continues to run correctly in a development setting using the `MockRedditProvider`.
+## 8. Free-tier live ingestion for private testing (current state, blocked)
+The intent: `REDDIT_LIVE_ENABLED=true` + `REDDIT_AUTHORIZED=true` (plus `REDDIT_CLIENT_ID`/
+`REDDIT_CLIENT_SECRET` from a "script" app) would enable live ingestion via Reddit's standard free
+developer tier - the non-commercial, personal-use tier described in Section 1 - for **private product
+validation only** (nobody charged, not publicly available), not as the live data source once real
+users are paying.
+
+**Confirmed blocked, 2026-08-26**: attempted to create a "script" app via the classic flow
+(Settings > Apps > OAuth app settings > create app). Submitting the form does nothing - no app is
+created - and instead surfaces a link to Reddit's "Responsible Builder Policy"
+(support.reddithelp.com, article 42728983564564), which directs non-commercial app development
+toward Reddit's newer "Devvit" Developer Platform instead. Devvit is built for apps that run *on*
+Reddit (mod tools, subreddit features, interactive posts) via a fundamentally different integration
+model, not for external services making read-only API calls from their own backend - it's unclear it
+even covers this use case. Net effect: as of this date we have not obtained any Reddit API
+credentials, and the classic free-tier path used to be the easy option is no longer straightforwardly
+available to new developers either.
+
+**If this is revisited**, check first whether Reddit's script-app creation has reopened, or whether
+Devvit has added a capability matching our use case, before assuming this section is still accurate.
+
+**Before removing the private-testing-only constraint** - i.e. before this product is sold to real
+customers using Reddit data - Section 5's commercial authorization must be secured first regardless of
+which access path is used. Flipping `REDDIT_AUTHORIZED=true` is a statement that a human has read this
+document and deliberately chosen to use the free tier for private testing; it is not a claim that
+commercial approval has been granted.
+
+## What remains before public/commercial launch
+We require an authorized path (an approved commercial API tier or Enterprise API contract) before this
+product can be sold using Reddit-derived data. Until then, live ingestion stays scoped to private,
+non-monetized testing under the free tier above, and `MockRedditProvider` remains available for
+offline development that needs no network access at all.
