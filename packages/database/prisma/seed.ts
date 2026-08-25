@@ -22,7 +22,7 @@ async function main() {
   await prisma.user.deleteMany();
 
   // Generate a random password for the dev user
-  const bcrypt = require('bcrypt');
+  const bcrypt = require('bcryptjs');
   const hashedPassword = await bcrypt.hash('dev-password-local-only', 10);
 
   // 1. Create a Test User

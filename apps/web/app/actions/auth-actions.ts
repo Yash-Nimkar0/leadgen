@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@repo/database";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
 export async function registerUser(email: string, passwordPlain: string) {
   try {

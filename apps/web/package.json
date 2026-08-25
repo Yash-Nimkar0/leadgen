@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@repo/ui": "*",
-    "bcrypt": "^6.0.0",
+    "bcryptjs": "^3.0.2",
     "lucide-react": "^1.33.0",
     "next": "16.3.0",
     "next-auth": "^4.24.15",
@@ -24,7 +24,7 @@
     "@playwright/test": "^1.62.1",
     "@repo/eslint-config": "*",
     "@repo/typescript-config": "*",
-    "@types/bcrypt": "^6.0.0",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^22.15.3",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",
