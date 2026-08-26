@@ -1,0 +1,66 @@
+"use client";
+
+import { useState } from "react";
+import { runExternalIngestion } from "../app/actions/dev-actions";
+import { Globe } from "lucide-react";
+
+export function ExternalIngestionTrigger({ projectId }: { projectId?: string }) {
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<{processed?: number | string, matched?: number | string, error?: string} | null>(null);
+
+  const handleTrigger = async () => {
+    setLoading(true);
+    setResult(null);
+    try {
+      const res = await runExternalIngestion(projectId);
+      if (res.error) {
+        setResult({ error: res.error });
+      } else {
+        setResult({ processed: res.processed, matched: res.matched });
+      }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (err) {
+      setResult({ error: "Failed to run external ingestion" });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (process.env.NODE_ENV !== "development") {
+    return null;
+  }
+
+  return (
+    <div className="rounded-xl border border-dashed border-blue-500/50 bg-blue-500/5 p-4 flex flex-col sm:flex-row items-center justify-between gap-4 mt-4">
+      <div>
+        <h3 className="font-semibold text-blue-700 dark:text-blue-500 flex items-center">
+          <span className="bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-400 text-[10px] uppercase font-bold px-1.5 py-0.5 rounded mr-2">DEV</span>
+          External Ingestion
+        </h3>
+        <p className="text-sm text-muted-foreground mt-1">
+          Trigger the external ingestion pipeline to fetch real leads for {projectId ? 'this project' : 'all projects'}.
+        </p>
+      </div>
+      
+      <div className="flex flex-col items-end gap-2">
+        <button
+          onClick={handleTrigger}
+          disabled={loading}
+          className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-blue-500 disabled:opacity-50"
+        >
+          <Globe className="mr-2 h-4 w-4" />
+          {loading ? "Running..." : "Run External Ingestion"}
+        </button>
+        
+        {result?.error && (
+          <span className="text-xs text-red-500">{result.error}</span>
+        )}
+        {result?.processed !== undefined && (
+          <span className="text-xs text-green-600 dark:text-green-400">
+            Success: Processed {result.processed} posts, created {result.matched} leads.
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}

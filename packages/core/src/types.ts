@@ -22,6 +22,13 @@ export interface FetchCandidatesInput {
   };
 }
 
+export interface SourceFetchInput {
+  query?: string;
+  source?: string;
+  limit: number;
+  cursor?: string;
+}
+
 export interface SourceProvider {
   fetchCandidates(input: FetchCandidatesInput): Promise<SourcePost[]>;
 }

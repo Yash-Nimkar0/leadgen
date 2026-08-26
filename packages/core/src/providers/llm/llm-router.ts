@@ -84,6 +84,7 @@ export class LLMRouter implements ILLMProvider {
           // Attach routing metadata for evaluation logging
           (result as any)._routerMetadata = {
             provider: providerName,
+            model: (provider as any).model,
             fallbackDepth: attempts - 1,
             latency
           };

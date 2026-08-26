@@ -3,14 +3,16 @@ import { authOptions } from "../../../lib/auth";
 import { prisma } from "@repo/database";
 import Link from "next/link";
 import { ArrowRight, Plus, Activity, Layers } from "lucide-react";
+import { redirect } from "next/navigation";
 
 import { MockIngestionTrigger } from "../../../components/MockIngestionTrigger";
+import { ExternalIngestionTrigger } from "../../../components/ExternalIngestionTrigger";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
   
   if (!session?.user) {
-    return null;
+    redirect("/login");
   }
 
   const projects = await prisma.project.findMany({
@@ -35,6 +37,7 @@ export default async function DashboardPage() {
       </div>
 
       <MockIngestionTrigger />
+      <ExternalIngestionTrigger />
 
       {projects.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border bg-muted/30 p-12 text-center flex flex-col items-center justify-center">

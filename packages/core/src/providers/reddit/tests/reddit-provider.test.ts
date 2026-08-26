@@ -47,11 +47,11 @@ describe('RedditProvider Architecture', () => {
     it('correctly maps a successful search response', () => {
       const posts = mapRedditSearchResponse(fixtures.successfulSearch);
       expect(posts).toHaveLength(2);
-      expect(posts[0].externalId).toBe('reddit_12345');
-      expect(posts[0].title).toBe('Need a good solution for API billing');
-      expect(posts[0].authorIdentifier).toBe('dev_founder');
-      expect(posts[0].subreddit).toBe('SaaS');
-      expect(posts[0].publishedAt.getTime()).toBe(1690000000000); // 1690000000 * 1000
+      expect(posts[0]!.externalId).toBe('reddit_12345');
+      expect(posts[0]!.title).toBe('Need a good solution for API billing');
+      expect(posts[0]!.authorIdentifier).toBe('dev_founder');
+      expect(posts[0]!.subreddit).toBe('SaaS');
+      expect(posts[0]!.publishedAt.getTime()).toBe(1690000000000); // 1690000000 * 1000
     });
 
     it('returns empty array for empty search', () => {

@@ -90,6 +90,8 @@ export class IngestionPipeline {
                 matchedKeywords: classification.matchedKeywords,
                 matchedCompetitors: classification.matchedCompetitors,
                 whyItMatters: classification.whyItMatters,
+                model: (classification as any)._routerMetadata?.provider,
+                modelVersion: (classification as any)._routerMetadata?.model,
                 recommendedPriority: classification.recommendedPriority
               });
               

@@ -119,10 +119,10 @@ async function runEvaluation() {
 
   for (const arg of process.argv.slice(2)) {
     if (arg.startsWith('--limit=')) {
-      limit = parseInt(arg.split('=')[1], 10);
+      limit = parseInt(arg.split('=')[1] || '', 10);
     }
     if (arg.startsWith('--provider=')) {
-      providerArg = arg.split('=')[1];
+      providerArg = arg.split('=')[1] || '';
     }
     if (arg.startsWith('--fixtures=')) {
       fixturesArg = (arg.split('=')[1] || '').split(',').map(s => s.trim()).filter(Boolean);
@@ -368,9 +368,9 @@ async function runEvaluation() {
   console.log(`False positives: ${falsePositives}`);
   console.log(`False negatives: ${falseNegatives}\n`);
   
-  const intentMismatches = mismatches.filter(m => m.reasons.some(r => r.includes('Expected Intent')));
-  const relevanceMismatches = mismatches.filter(m => m.reasons.some(r => r.includes('Expected Relevance')));
-  const scoreMismatches = mismatches.filter(m => m.reasons.some(r => r.includes('Expected Score Range')));
+  const intentMismatches = mismatches.filter(m => m.reasons.some((r: string) => r.includes('Expected Intent')));
+  const relevanceMismatches = mismatches.filter(m => m.reasons.some((r: string) => r.includes('Expected Relevance')));
+  const scoreMismatches = mismatches.filter(m => m.reasons.some((r: string) => r.includes('Expected Score Range')));
 
   const printMismatch = (m: any) => {
     console.log(`🔹 Fixture ID: ${m.id}`);

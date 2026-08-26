@@ -32,6 +32,7 @@ async function runSmokeTest() {
   ];
 
   for (const post of tests) {
+    if (!post) continue;
     console.log(`\n\n=== Testing Post: "${post.title}" ===`);
     try {
       const result = await provider.classify({

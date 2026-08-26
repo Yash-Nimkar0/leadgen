@@ -51,8 +51,8 @@ async function runMockTests(userId: string, projectId: string) {
   const notificationService = new NotificationService(prisma, mockProvider);
 
   // Test 1: Should notify if score is above threshold
-  const leadId = await createLeadWithScore(projectId, 85);
-  const result = await notificationService.processLead(leadId);
+  let leadId = await createLeadWithScore(projectId, 85);
+  let result = await notificationService.processLead(leadId);
   console.log(`Test 1 (Above threshold): ${result ? 'PASSED' : 'FAILED'}`);
   
   // Test 2: Idempotency (should not send again)

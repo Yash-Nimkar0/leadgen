@@ -78,3 +78,67 @@ export async function runMockIngestion(projectId?: string) {
     return { error: "Mock ingestion failed" };
   }
 }
+
+export async function runExternalIngestion(projectId?: string) {
+  if (process.env.NODE_ENV !== "development") {
+    return { error: "This action is only available in development mode." };
+  }
+
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user) {
+    return { error: "Unauthorized" };
+  }
+
+  if (projectId) {
+    const project = await prisma.project.findUnique({ where: { id: projectId } });
+    if (!project || project.userId !== session.user.id) {
+      return { error: "Project not found or access denied" };
+    }
+  }
+
+  try {
+    const projectRepo = new PrismaProjectRepository();
+    const leadRepo = new PrismaProjectLeadRepository();
+    const runRepo = new PrismaIngestionRunRepository();
+    const analysisRepo = new PrismaAnalysisRepository();
+    const postRepo = new PrismaPostRepository();
+
+    // Dynamically require the factory and router to avoid issues if env is missing
+    const { getSourceProvider } = await import("@repo/core/src/providers/factory");
+    const { LLMRouter } = await import("@repo/core/src/providers/llm/llm-router");
+    
+    const sourceProvider = getSourceProvider();
+    const llmProvider = new LLMRouter();
+    const notificationProvider = new MockNotificationProvider();
+    const notificationService = new NotificationService(prisma, notificationProvider);
+
+    const pipeline = new IngestionPipeline(
+      sourceProvider,
+      postRepo,
+      leadRepo,
+      projectRepo,
+      runRepo,
+      llmProvider,
+      analysisRepo,
+      notificationService
+    );
+
+    await pipeline.run(projectId);
+
+    revalidatePath("/dashboard");
+    revalidatePath("/projects");
+    if (projectId) {
+      revalidatePath(`/projects/${projectId}/leads`);
+    }
+    return {
+      success: true,
+      processed: "Check console",
+      matched: "Check console"
+    };
+  } catch (error) {
+    console.error("External ingestion failed:", error);
+    return { error: "External ingestion failed" };
+  }
+}
+
