@@ -12,134 +12,23 @@
 # Error details
 
 ```
-Test timeout of 60000ms exceeded.
-```
+Error: browserType.launch: Target page, context or browser has been closed
+Browser logs:
 
-```
-Error: expect(page).toHaveURL(expected) failed
-
-Expected pattern: /.*\/login\?registered=true/
-Received string:  "http://localhost:3000/register"
-Timeout: 15000ms
-
+<launching> /Users/yashnimkar/Library/Caches/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-mac-arm64/chrome-headless-shell --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/var/folders/bg/2382qk_x5bqdt_zv7sz3y5d80000gn/T/playwright_chromiumdev_profile-e7jlop --remote-debugging-pipe --no-startup-window
+<launched> pid=49911
+[pid=49911][err] [0826/041611.697149:FATAL:base/apple/mach_port_rendezvous_mac.cc:159] Check failed: kr == KERN_SUCCESS. bootstrap_check_in org.chromium.Chromium.MachPortRendezvousServer.49911: Permission denied (1100)
 Call log:
-  - Expect "toHaveURL" with timeout 15000ms
-    11 × locator resolved to <html lang="en">…</html>
-       - unexpected value "http://localhost:3000/register"
+  - <launching> /Users/yashnimkar/Library/Caches/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-mac-arm64/chrome-headless-shell --disable-field-trial-config --disable-background-networking --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-back-forward-cache --disable-breakpad --disable-client-side-phishing-detection --disable-component-extensions-with-background-pages --disable-component-update --no-default-browser-check --disable-default-apps --disable-dev-shm-usage --disable-edgeupdater --disable-extensions --disable-features=AvoidUnnecessaryBeforeUnloadCheckSync,BoundaryEventDispatchTracksNodeRemoval,DestroyProfileOnBrowserClose,DialMediaRouteProvider,GlobalMediaControls,HttpsUpgrades,LensOverlay,MediaRouter,PaintHolding,ThirdPartyStoragePartitioning,BlockOriginHeaderModificationOnRedirect,Translate,AutoDeElevate,OptimizationHints,msForceBrowserSignIn,msEdgeUpdateLaunchServicesPreferredVersion --enable-features=CDPScreenshotNewSurface --allow-pre-commit-input --disable-hang-monitor --disable-ipc-flooding-protection --disable-popup-blocking --disable-prompt-on-repost --disable-renderer-backgrounding --disable-updater-scheduler --force-color-profile=srgb --metrics-recording-only --no-first-run --password-store=basic --use-mock-keychain --no-service-autorun --export-tagged-pdf --disable-search-engine-choice-screen --unsafely-disable-devtools-self-xss-warnings --edge-skip-compat-layer-relaunch --disable-infobars --disable-search-engine-choice-screen --disable-sync --enable-unsafe-swiftshader --headless --hide-scrollbars --mute-audio --blink-settings=primaryHoverType=2,availableHoverTypes=2,primaryPointerType=4,availablePointerTypes=4 --no-sandbox --user-data-dir=/var/folders/bg/2382qk_x5bqdt_zv7sz3y5d80000gn/T/playwright_chromiumdev_profile-e7jlop --remote-debugging-pipe --no-startup-window
+  - <launched> pid=49911
+  - [pid=49911][err] [0826/041611.697149:FATAL:base/apple/mach_port_rendezvous_mac.cc:159] Check failed: kr == KERN_SUCCESS. bootstrap_check_in org.chromium.Chromium.MachPortRendezvousServer.49911: Permission denied (1100)
+  - [pid=49911] <gracefully close start>
+  - [pid=49911] <kill>
+  - [pid=49911] <will force kill>
+  - [pid=49911] exception while trying to kill process: Error: kill ESRCH
+  - [pid=49911] <process did exit: exitCode=null, signal=SIGTRAP>
+  - [pid=49911] starting temporary directories cleanup
+  - [pid=49911] finished temporary directories cleanup
+  - [pid=49911] <gracefully close end>
 
-```
-
-```yaml
-- alert
-- heading "Create an account" [level=2]
-- paragraph: Start monitoring Reddit for opportunities.
-- text: Email address
-- textbox "Email address": test-297c0103-e5e2-4b7e-8ad3-f841ef592ae4@example.com
-- text: Password
-- textbox "Password":
-  - /placeholder: Password (min 8 characters)
-  - text: password123456
-- button "Creating account..." [disabled]
-- link "Already have an account? Sign in":
-  - /url: /login
-```
-
-# Test source
-
-```ts
-  1  | import { test, expect } from '@playwright/test';
-  2  | import { v4 as uuid } from 'uuid';
-  3  | 
-  4  | test.describe('Dashboard E2E', () => {
-  5  |   const userEmail = `test-${uuid()}@example.com`;
-  6  |   const userPassword = 'password123456';
-  7  |   
-  8  |   test('User Registration, Login, Project Creation, and Dashboard Flow', async ({ page }) => {
-  9  |     // 1. Landing Page
-  10 |     await page.goto('http://localhost:3000/');
-  11 |     await expect(page.locator('text=Reddit Intent').first()).toBeVisible();
-  12 |     await expect(page.locator('text=Find customers when they are ready to buy')).toBeVisible();
-  13 | 
-  14 |     // 2. Registration
-  15 |     await page.click('text=Sign up');
-  16 |     await expect(page).toHaveURL(/.*\/register/);
-  17 |     await page.fill('input[name="email"]', userEmail);
-  18 |     await page.fill('input[name="password"]', userPassword);
-  19 |     await page.click('button[type="submit"]');
-  20 | 
-  21 |     // Should redirect to login with success message
-> 22 |     await expect(page).toHaveURL(/.*\/login\?registered=true/);
-     |                        ^ Error: expect(page).toHaveURL(expected) failed
-  23 |     await expect(page.locator('text=Account created successfully')).toBeVisible();
-  24 | 
-  25 |     // 3. Login
-  26 |     await page.fill('input[name="email"]', userEmail);
-  27 |     await page.fill('input[name="password"]', userPassword);
-  28 |     await page.click('button[type="submit"]');
-  29 | 
-  30 |     // Should redirect to dashboard
-  31 |     await expect(page).toHaveURL(/.*\/dashboard/);
-  32 |     await expect(page.getByRole('heading', { name: 'Overview' })).toBeVisible();
-  33 |     await expect(page.locator('text=Create your first project')).toBeVisible();
-  34 | 
-  35 |     // 4. Create Project
-  36 |     await page.click('text=New Project');
-  37 |     await expect(page).toHaveURL(/.*\/projects\/new/);
-  38 |     
-  39 |     await page.fill('input[name="name"]', 'Playwright Test Project');
-  40 |     await page.fill('textarea[name="productDescription"]', 'Testing automated AI intent detection');
-  41 |     await page.fill('input[name="keywords"]', 'playwright, e2e, testing');
-  42 |     await page.fill('input[name="sources"]', 'playwright, javascript');
-  43 |     
-  44 |     await page.click('button[type="submit"]');
-  45 | 
-  46 |     // Should redirect to leads inbox
-  47 |     await expect(page).toHaveURL(/.*\/projects\/[a-zA-Z0-9-]+\/leads/);
-  48 |     await expect(page.locator('h1')).toContainText('Playwright Test Project Leads');
-  49 | 
-  50 |     // 5. Navigate to Settings
-  51 |     await page.goto(page.url().replace('/leads', '/settings'));
-  52 |     await page.fill('input[name="name"]', 'Playwright Test Project Updated');
-  53 |     await page.click('button[type="submit"]');
-  54 |     await expect(page.locator('text=Settings updated successfully')).toBeVisible();
-  55 | 
-  56 |     // 6. Navigate back to Dashboard and Run Mock Ingestion
-  57 |     await page.goto('http://localhost:3000/dashboard');
-  58 |     await expect(page.locator('text=Playwright Test Project Updated').first()).toBeVisible();
-  59 |     
-  60 |     await page.click('text=Run Mock Ingestion');
-  61 |     await expect(page.locator('text=Success:')).toBeVisible({ timeout: 30000 });
-  62 | 
-  63 |     // 7. Check Leads Inbox for Mock Data
-  64 |     await page.click('text=Playwright Test Project Updated');
-  65 |     await expect(page).toHaveURL(/.*\/projects\/[a-zA-Z0-9-]+\/leads/);
-  66 |     
-  67 |     // There should be leads now
-  68 |     const leads = page.locator('text=View details');
-  69 |     await expect(leads.first()).toBeVisible();
-  70 | 
-  71 |     // 8. Open a Lead
-  72 |     await leads.first().click();
-  73 |     await expect(page).toHaveURL(/.*\/projects\/[a-zA-Z0-9-]+\/leads\/[a-zA-Z0-9-]+/);
-  74 |     
-  75 |     // 9. Mark Viewed
-  76 |     await page.click('text=Mark Viewed');
-  77 |     await expect(page.locator('text=Mark Unread')).toBeVisible();
-  78 | 
-  79 |     // 10. Dismiss
-  80 |     await page.click('text=Dismiss');
-  81 |     await expect(page.locator('text=Restore')).toBeVisible();
-  82 | 
-  83 |     // 11. Test IDOR - Logout and try accessing it
-  84 |     const currentUrl = page.url();
-  85 |     await page.click('text=Sign out');
-  86 |     await expect(page).toHaveURL('http://localhost:3000/');
-  87 | 
-  88 |     // Try accessing lead directly
-  89 |     await page.goto(currentUrl);
-  90 |     // Should be redirected to login
-  91 |     await expect(page).toHaveURL(/.*\/login/);
-  92 |   });
-  93 | });
-  94 | 
 ```

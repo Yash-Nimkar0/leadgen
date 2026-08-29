@@ -1,11 +1,18 @@
 import OpenAI from 'openai';
 import { zodResponseFormat } from 'openai/helpers/zod';
-import { ILLMProvider, ClassificationInput, ClassificationResult, ClassificationResultSchema, LLMError, LLMErrorCategory } from './interfaces';
+import { ILLMProvider, ClassificationInput, ClassificationResult, ClassificationResultSchema, LLMError, LLMErrorCategory, ProjectVocabularySchema } from './interfaces';
 import { buildClassificationSystemPrompt, buildClassificationUserContent } from './prompt';
+import { buildVocabularySystemPrompt } from './vocabulary-prompt';
 
 export class OpenAIProvider implements ILLMProvider {
   private openai: OpenAI;
-  public readonly model: string;
+  public readonly classificationModel: string;
+  public readonly vocabModel: string;
+
+  // ILLMProvider expects a model property, we can return classificationModel for backwards compatibility
+  get model(): string {
+    return this.classificationModel;
+  }
 
   constructor() {
     const apiKey = process.env.OPENAI_API_KEY;
@@ -13,7 +20,8 @@ export class OpenAIProvider implements ILLMProvider {
       throw new Error('OPENAI_API_KEY environment variable is missing.');
     }
     
-    this.model = process.env.OPENAI_MODEL || 'gpt-4o-mini';
+    this.classificationModel = process.env.OPENAI_MODEL || 'gpt-4o-mini';
+    this.vocabModel = process.env.OPENAI_VOCAB_MODEL || 'gpt-4o-mini';
     this.openai = new OpenAI({ apiKey });
   }
 
@@ -24,7 +32,7 @@ export class OpenAIProvider implements ILLMProvider {
     let completion;
     try {
       completion = await this.openai.chat.completions.parse({
-        model: this.model,
+        model: this.classificationModel,
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: userContent },
@@ -33,24 +41,56 @@ export class OpenAIProvider implements ILLMProvider {
         temperature: 0.1, // Keep it deterministic
       });
     } catch (error: any) {
-      throw this.mapError(error);
+      throw this.mapError(error, this.classificationModel);
     }
 
     const result = completion.choices[0]?.message.parsed;
     const refusal = completion.choices[0]?.message.refusal;
 
     if (refusal) {
-      throw new LLMError("INVALID_RESPONSE", `OpenAI refused to classify: ${refusal}`, "openai", this.model);
+      throw new LLMError("INVALID_RESPONSE", `OpenAI refused to classify: ${refusal}`, "openai", this.classificationModel);
     }
 
     if (!result) {
-      throw new LLMError("INVALID_RESPONSE", "OpenAI returned an empty or unparseable response.", "openai", this.model);
+      throw new LLMError("INVALID_RESPONSE", "OpenAI returned an empty or unparseable response.", "openai", this.classificationModel);
     }
 
     return result;
   }
 
-  private mapError(error: any): LLMError {
+  async generateVocabulary(projectConfig: any): Promise<any> {
+    const systemPrompt = buildVocabularySystemPrompt(projectConfig);
+
+    let completion;
+    try {
+      completion = await this.openai.chat.completions.parse({
+        model: this.vocabModel,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: 'Generate the structured retrieval vocabulary for this project.' },
+        ],
+        response_format: zodResponseFormat(ProjectVocabularySchema, 'vocabulary'),
+        temperature: 0.1,
+      });
+    } catch (error: any) {
+      throw this.mapError(error, this.vocabModel);
+    }
+
+    const result = completion.choices[0]?.message.parsed;
+    const refusal = completion.choices[0]?.message.refusal;
+
+    if (refusal) {
+      throw new LLMError("INVALID_RESPONSE", `OpenAI refused to generate vocabulary: ${refusal}`, "openai", this.vocabModel);
+    }
+
+    if (!result) {
+      throw new LLMError("INVALID_RESPONSE", "OpenAI returned an empty or unparseable response.", "openai", this.vocabModel);
+    }
+
+    return result;
+  }
+
+  private mapError(error: any, modelName: string): LLMError {
     const status = error.status;
     const msg = error.message || String(error);
 
@@ -72,6 +112,6 @@ export class OpenAIProvider implements ILLMProvider {
       category = "TEMPORARY_PROVIDER_ERROR";
     }
 
-    return new LLMError(category, msg, "openai", this.model);
+    return new LLMError(category, msg, "openai", modelName);
   }
 }

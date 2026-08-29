@@ -22,7 +22,7 @@ export interface IProjectLeadRepository {
   /**
    * Creates the ProjectLead linking the project and the post.
    */
-  createLead(projectId: string, redditPostId: string): Promise<string>;
+  createLead(projectId: string, redditPostId: string, provenance?: string, wouldHaveMatchedOldExactFilter?: boolean): Promise<string>;
 }
 
 export interface IProjectRepository {
@@ -35,15 +35,29 @@ export interface IProjectRepository {
     id: string;
     name: string;
     productDescription: string;
+    idealCustomerProfile?: string | null;
+    exclusionRules?: string | null;
+    vocabularyInputHash?: string | null;
+    vocabulary?: any;
     keywords: string[];
     competitors: string[];
     sources: string[];
   }>>;
+
+  updateVocabulary(projectId: string, hash: string, vocabulary: any, provider?: string, model?: string): Promise<void>;
 }
 
 export interface IIngestionRunRepository {
   startRun(projectId: string | null): Promise<string>;
-  updateMetrics(runId: string, metrics: { postsDiscovered: number, postsFiltered: number, postsClassified: number }): Promise<void>;
+  updateMetrics(runId: string, metrics: { 
+    postsDiscovered: number, 
+    postsInvalid: number, 
+    postsPreFiltered: number, 
+    postsDuplicateLeads: number, 
+    postsClassified: number,
+    leadsCreated: number,
+    highIntentLeads: number
+  }): Promise<void>;
   completeRun(runId: string): Promise<void>;
   failRun(runId: string, error: string): Promise<void>;
 }

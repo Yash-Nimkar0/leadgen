@@ -25,6 +25,7 @@ class MockProjectRepository {
       }
     ];
   }
+  async updateVocabulary(projectId: string, hash: string, vocabulary: any, provider?: string, model?: string): Promise<void> {}
 }
 
 class MockPostRepository {

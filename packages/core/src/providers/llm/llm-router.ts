@@ -84,7 +84,7 @@ export class LLMRouter implements ILLMProvider {
           // Attach routing metadata for evaluation logging
           (result as any)._routerMetadata = {
             provider: providerName,
-            model: (provider as any).model,
+            model: (provider as any).vocabModel || (provider as any).model,
             fallbackDepth: attempts - 1,
             latency
           };
@@ -135,5 +135,63 @@ export class LLMRouter implements ILLMProvider {
     }
 
     throw new Error(`LLMRouter: All attempted providers failed. Last error: ${lastError?.message}`);
+  }
+
+  async generateVocabulary(projectConfig: any): Promise<any> {
+    const vocabPrimary = (process.env.LLM_VOCAB_PROVIDER || 'openai').toLowerCase().trim();
+    const order = [vocabPrimary, 'groq'].filter((v, i, a) => a.indexOf(v) === i);
+    
+    let lastError: any = null;
+    const maxRetries = 1;
+
+    for (const providerName of order) {
+      let attempts = 0;
+      
+      while (attempts <= maxRetries) {
+        // Init provider if needed
+        this.tryInitProvider(providerName);
+        const provider = this.providers.get(providerName);
+        
+        if (!provider || !provider.generateVocabulary) {
+           break; // Cannot use this provider for vocabulary
+        }
+        
+        try {
+          const result = await provider.generateVocabulary(projectConfig);
+          console.log(`LLMRouter: Generated vocabulary using ${providerName}`);
+          
+          // Attach metadata so pipeline can persist it
+          (result as any)._routerMetadata = {
+            provider: providerName,
+            model: (provider as any).vocabModel || (provider as any).model
+          };
+          
+          return result;
+        } catch (error: any) {
+          const llmError = error instanceof LLMError ? error : new LLMError("UNKNOWN", error.message || String(error), providerName);
+          lastError = llmError;
+          console.warn(`LLMRouter: Vocabulary generation failed with ${providerName}. Category: ${llmError.category}. Error: ${llmError.message}`);
+          
+          if (llmError.category === 'INVALID_REQUEST' || llmError.category === 'INVALID_RESPONSE' || llmError.category === 'QUOTA_EXHAUSTED' || llmError.category === 'AUTHENTICATION_ERROR') {
+             break; // Go to next provider (fallback)
+          }
+
+          if (llmError.category === 'RATE_LIMITED' || llmError.category === 'TIMEOUT' || llmError.category === 'TEMPORARY_PROVIDER_ERROR') {
+            if (attempts < maxRetries) {
+              attempts++;
+              console.log(`LLMRouter: Retrying vocabulary generation '${providerName}' (attempt ${attempts}/${maxRetries})...`);
+              await new Promise(resolve => setTimeout(resolve, process.env.NODE_ENV === 'test' ? 1 : 2000));
+              continue;
+            } else {
+              break; // Max retries, fallback
+            }
+          }
+          break;
+        }
+      }
+    }
+    
+    // Throw error if all fail, ingestion pipeline handles it
+    throw new Error(`LLMRouter: All vocabulary-capable providers failed. Last error: ${lastError?.message}`);
   }
 }

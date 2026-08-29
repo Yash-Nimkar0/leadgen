@@ -31,6 +31,8 @@ export interface ClassificationInput {
   projectConfig: {
     name: string;
     description: string;
+    idealCustomerProfile?: string | null;
+    exclusionRules?: string | null;
     keywords: string[];
     competitors: string[]; // specifically filtered competitor keywords
   };
@@ -43,6 +45,7 @@ export interface ClassificationInput {
 
 export interface ILLMProvider {
   classify(input: ClassificationInput): Promise<ClassificationResult>;
+  generateVocabulary?(projectConfig: any): Promise<any>;
 }
 
 export type LLMErrorCategory =
@@ -66,3 +69,14 @@ export class LLMError extends Error {
     this.name = 'LLMError';
   }
 }
+
+export const ProjectVocabularySchema = z.object({
+  entities: z.array(z.string()).max(20),
+  synonyms: z.array(z.string()).max(20),
+  subtypes: z.array(z.string()).max(20),
+  contexts: z.array(z.string()).max(20),
+  problemTerms: z.array(z.string()).max(20),
+  intentTerms: z.array(z.string()).max(20),
+  competitorTerms: z.array(z.string()).max(20),
+  exclusionTerms: z.array(z.string()).max(20)
+});

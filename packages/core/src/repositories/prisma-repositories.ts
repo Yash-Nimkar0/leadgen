@@ -41,12 +41,14 @@ export class PrismaProjectLeadRepository implements IProjectLeadRepository {
     return !!lead;
   }
 
-  async createLead(projectId: string, redditPostId: string): Promise<string> {
+  async createLead(projectId: string, redditPostId: string, provenance?: string, wouldHaveMatchedOldExactFilter?: boolean): Promise<string> {
     const lead = await prisma.projectLead.create({
       data: {
         projectId,
         redditPostId,
-        status: 'NEW'
+        status: 'NEW',
+        provenance,
+        wouldHaveMatchedOldExactFilter
       }
     });
     return lead.id;
@@ -54,7 +56,18 @@ export class PrismaProjectLeadRepository implements IProjectLeadRepository {
 }
 
 export class PrismaProjectRepository implements IProjectRepository {
-  async getActiveProjects(): Promise<Array<{ id: string; name: string; productDescription: string; keywords: string[]; competitors: string[]; sources: string[] }>> {
+  async getActiveProjects(): Promise<Array<{
+    id: string;
+    name: string;
+    productDescription: string;
+    idealCustomerProfile?: string | null;
+    exclusionRules?: string | null;
+    vocabularyInputHash?: string | null;
+    vocabulary?: any;
+    keywords: string[];
+    competitors: string[];
+    sources: string[];
+  }>> {
     const projects = await prisma.project.findMany({
       include: {
         keywords: true,
@@ -66,10 +79,27 @@ export class PrismaProjectRepository implements IProjectRepository {
       id: p.id,
       name: p.name,
       productDescription: p.productDescription,
+      idealCustomerProfile: p.idealCustomerProfile,
+      exclusionRules: p.exclusionRules,
+      vocabularyInputHash: p.vocabularyInputHash,
+      vocabulary: p.vocabulary,
       keywords: p.keywords.filter(k => k.type !== 'COMPETITOR').map(k => k.keyword),
       competitors: p.keywords.filter(k => k.type === 'COMPETITOR').map(k => k.keyword),
       sources: p.sources.map(s => s.sourceIdentifier)
     }));
+  }
+
+  async updateVocabulary(projectId: string, hash: string, vocabulary: any, provider?: string, model?: string): Promise<void> {
+    await prisma.project.update({
+      where: { id: projectId },
+      data: {
+        vocabularyInputHash: hash,
+        vocabularyGeneratedAt: new Date(),
+        vocabularyProvider: provider ?? null,
+        vocabularyModel: model ?? null,
+        vocabulary: vocabulary
+      }
+    });
   }
 }
 
@@ -84,13 +114,25 @@ export class PrismaIngestionRunRepository implements IIngestionRunRepository {
     return run.id;
   }
 
-  async updateMetrics(runId: string, metrics: { postsDiscovered: number; postsFiltered: number; postsClassified: number; }): Promise<void> {
+  async updateMetrics(runId: string, metrics: { 
+    postsDiscovered: number; 
+    postsInvalid: number; 
+    postsPreFiltered: number; 
+    postsDuplicateLeads: number; 
+    postsClassified: number;
+    leadsCreated: number;
+    highIntentLeads: number;
+  }): Promise<void> {
     await prisma.ingestionRun.update({
       where: { id: runId },
       data: {
         postsDiscovered: metrics.postsDiscovered,
-        postsFiltered: metrics.postsFiltered,
-        postsClassified: metrics.postsClassified
+        postsInvalid: metrics.postsInvalid,
+        postsPreFiltered: metrics.postsPreFiltered,
+        postsDuplicateLeads: metrics.postsDuplicateLeads,
+        postsClassified: metrics.postsClassified,
+        leadsCreated: metrics.leadsCreated,
+        highIntentLeads: metrics.highIntentLeads
       }
     });
   }

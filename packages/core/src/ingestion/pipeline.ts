@@ -6,6 +6,7 @@ import { normalizePost } from './normalizer';
 import { ILLMProvider } from '../providers/llm/interfaces';
 import { Scorer } from './scorer';
 import { NotificationService } from '../notification/NotificationService';
+import { computeVocabularyHash, enforceVocabularyLimits } from './vocabulary';
 
 export class IngestionPipeline {
   constructor(
@@ -22,7 +23,15 @@ export class IngestionPipeline {
   async run(projectId?: string) {
     const runId = await this.runRepo.startRun(projectId || null);
     
-    const metrics = { postsDiscovered: 0, postsFiltered: 0, postsClassified: 0 };
+    const metrics = { 
+      postsDiscovered: 0, 
+      postsInvalid: 0, 
+      postsPreFiltered: 0, 
+      postsDuplicateLeads: 0, 
+      postsClassified: 0,
+      leadsCreated: 0,
+      highIntentLeads: 0
+    };
     const deduplicator = new Deduplicator(this.postRepo);
     const matcher = new ProjectMatcher();
     const scorer = new Scorer();
@@ -32,32 +41,81 @@ export class IngestionPipeline {
       const targetProjects = projectId ? projects.filter(p => p.id === projectId) : projects;
 
       for (const project of targetProjects) {
+        
+        // 1. Vocabulary Generation & Cache Check
+        const currentHash = computeVocabularyHash({
+          productDescription: project.productDescription,
+          keywords: project.keywords,
+          competitors: project.competitors,
+          idealCustomerProfile: project.idealCustomerProfile || undefined,
+          exclusionRules: project.exclusionRules || undefined
+        });
+
+        if (project.vocabularyInputHash !== currentHash) {
+          console.log(`[Project ${project.id}] Hash mismatch. Regenerating vocabulary...`);
+          try {
+            if (this.llmProvider.generateVocabulary) {
+              const rawVocab = await this.llmProvider.generateVocabulary({
+                name: project.name,
+                description: project.productDescription,
+                keywords: project.keywords,
+                competitors: project.competitors,
+                idealCustomerProfile: project.idealCustomerProfile,
+                exclusionRules: project.exclusionRules
+              });
+              const boundedVocab = enforceVocabularyLimits(rawVocab);
+              const provider = (rawVocab as any)._routerMetadata?.provider;
+              const model = (rawVocab as any)._routerMetadata?.model;
+              await this.projectRepo.updateVocabulary(project.id, currentHash, boundedVocab, provider, model);
+              project.vocabulary = boundedVocab;
+              project.vocabularyInputHash = currentHash;
+              console.log(`[Project ${project.id}] Vocabulary successfully regenerated and saved.`);
+            } else {
+              console.warn(`[Project ${project.id}] LLM Provider does not support generateVocabulary. Falling back to cached or empty.`);
+            }
+          } catch (error: any) {
+            console.error(`[Project ${project.id}] Vocabulary generation failed:`, error.message);
+            // DO NOT fail ingestion. Use existing valid cached vocabulary if available, or just null/undefined
+            // This ensures exact-query fallback behavior without breaking the pipeline.
+          }
+        }
+
         // Fetch candidates for this specific project
-        const posts = await this.provider.fetchCandidates({ projectConfig: project });
+        console.log("Fetching candidates..."); const posts = await this.provider.fetchCandidates({ projectConfig: project });
         metrics.postsDiscovered += posts.length;
 
         for (const rawPost of posts) {
-          const normalized = normalizePost(rawPost);
+          console.log("Processing post:", rawPost.externalId); const normalized = normalizePost(rawPost);
           if (!normalized) {
-             metrics.postsFiltered++;
+             metrics.postsInvalid++;
              continue; // Invalid post
           }
+
+          // Preserve provenance and metadata
+          normalized.provenance = rawPost.provenance;
 
           // Check if it's a candidate for this project
           const isMatch = matcher.isCandidate(normalized, project);
           if (!isMatch) {
-            metrics.postsFiltered++;
+            metrics.postsPreFiltered++;
             continue;
           }
 
           // Hash and upsert the global RedditPost
           const contentHash = deduplicator.generateContentHash(normalized);
-          const internalPostId = await this.postRepo.upsertPost(normalized, contentHash);
+          console.log("Upserting post to DB"); const internalPostId = await this.postRepo.upsertPost(normalized, contentHash);
 
           // Deduplicate lead for this project
           const leadExists = await this.leadRepo.exists(project.id, internalPostId);
           if (!leadExists) {
-            const projectLeadId = await this.leadRepo.createLead(project.id, internalPostId);
+            const wouldHaveMatched = (normalized as any).wouldHaveMatchedOldExactFilter;
+            const projectLeadId = await this.leadRepo.createLead(
+              project.id, 
+              internalPostId,
+              normalized.provenance,
+              wouldHaveMatched
+            );
+            metrics.leadsCreated++;
             
             // LLM Classification Stage
             try {
@@ -65,6 +123,8 @@ export class IngestionPipeline {
                 projectConfig: {
                   name: project.name,
                   description: project.productDescription,
+                  idealCustomerProfile: project.idealCustomerProfile,
+                  exclusionRules: project.exclusionRules,
                   keywords: project.keywords,
                   competitors: project.competitors
                 },
@@ -78,6 +138,9 @@ export class IngestionPipeline {
               metrics.postsClassified++;
               
               const finalScore = scorer.calculateFinalScore(classification);
+              if (finalScore >= 80) {
+                metrics.highIntentLeads++;
+              }
               
               await this.analysisRepo.createAnalysis(projectLeadId, {
                 relevanceScore: classification.relevance,
@@ -97,18 +160,16 @@ export class IngestionPipeline {
               
               if (this.notificationService) {
                 // Process notification asynchronously so it doesn't block ingestion
-                // In a production serverless environment, this would be await or waitUntil
                 this.notificationService.processLead(projectLeadId).catch((err) => {
                   console.error(`Failed to process notification for lead ${projectLeadId}`, err);
                 });
               }
             } catch (llmError) {
               console.error(`Failed to classify post ${normalized.externalId}`, llmError);
-              // We created the lead, but classification failed. Can be retried later.
             }
           } else {
              // Lead already exists, filter it out from new discoveries
-             metrics.postsFiltered++;
+             metrics.postsDuplicateLeads++;
           }
         }
       }
@@ -121,4 +182,3 @@ export class IngestionPipeline {
     }
   }
 }
-

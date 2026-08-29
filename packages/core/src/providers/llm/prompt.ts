@@ -235,11 +235,14 @@ PASSIVE_DISCUSSION vs RECOMMENDATION_REQUEST
 </Contrastive_Examples>`;
 
 export function buildClassificationSystemPrompt(projectConfig: ClassificationInput['projectConfig']): string {
+  const idealProfileStr = projectConfig.idealCustomerProfile ? `\nIdeal Customer Profile:\n${projectConfig.idealCustomerProfile}` : '';
+  const exclusionRulesStr = projectConfig.exclusionRules ? `\nExclusion Rules:\n${projectConfig.exclusionRules}` : '';
+  
   return `You are an expert sales intelligence AI. Your task is to analyze a Reddit post and determine its commercial intent and relevance to a specific product.
 
 <Product_Context>
 Name: ${projectConfig.name}
-Description: ${projectConfig.description}
+Description: ${projectConfig.description}${idealProfileStr}${exclusionRulesStr}
 Monitored Keywords: ${projectConfig.keywords.join(', ')}
 Competitors: ${projectConfig.competitors.join(', ')}
 </Product_Context>
@@ -248,10 +251,11 @@ ${TAXONOMY}
 
 <Instructions>
 1. Analyze the untrusted user content below.
-2. Choose exactly one intentType by applying the Precedence_Rules above: walk the list in
+2. Consider the Ideal Customer Profile and Exclusion Rules strictly. If the post matches an exclusion rule (e.g. PG/shared flat when excluded), drastically lower the Relevance and Commercial Intent scores (categorizing as LOW_VALUE or IRRELEVANT).
+3. Choose exactly one intentType by applying the Precedence_Rules above: walk the list in
    order and assign the first category whose defining evidence is actually present.
-3. Extract exactly which configured keywords and competitors were mentioned.
-4. Calculate a relevance score (0-100) based on how well the post matches the product
+4. Extract exactly which configured keywords and competitors were mentioned.
+5. Calculate a relevance score (0-100) based on how well the post matches the product
    description. Relevance is graded, not binary - do not collapse to 0 just because the post
    isn't directly about the exact product category. Consider: direct product relevance (the
    post is literally about this product category - score high), adjacent problem relevance

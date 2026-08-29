@@ -1,7 +1,8 @@
 import Groq from 'groq-sdk';
 import { zodToJsonSchema } from 'zod-to-json-schema';
-import { ILLMProvider, ClassificationInput, ClassificationResult, ClassificationResultSchema, LLMError, LLMErrorCategory } from './interfaces';
+import { ILLMProvider, ClassificationInput, ClassificationResult, ClassificationResultSchema, LLMError, LLMErrorCategory, ProjectVocabularySchema } from './interfaces';
 import { buildClassificationSystemPrompt, buildClassificationUserContent } from './prompt';
+import { buildVocabularySystemPrompt } from './vocabulary-prompt';
 
 export class GroqProvider implements ILLMProvider {
   private groq: Groq;
@@ -59,6 +60,41 @@ export class GroqProvider implements ILLMProvider {
       return ClassificationResultSchema.parse(parsed);
     } catch (error: any) {
       throw new LLMError("INVALID_RESPONSE", `Failed to parse or validate Groq response: ${error.message}`, "groq", this.model);
+    }
+  }
+
+  async generateVocabulary(projectConfig: any): Promise<any> {
+    const systemPrompt = buildVocabularySystemPrompt(projectConfig);
+    const jsonSchema = zodToJsonSchema(ProjectVocabularySchema as any);
+    if ('$schema' in jsonSchema) {
+      delete (jsonSchema as any).$schema;
+    }
+
+    let completion;
+    try {
+      completion = await this.groq.chat.completions.create({
+        model: this.model, // We use the same model
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: 'Generate the structured retrieval vocabulary for this project.' }
+        ],
+        response_format: { type: "json_schema", json_schema: { name: "vocabulary", schema: jsonSchema, strict: true } },
+        temperature: 0.1,
+      });
+    } catch (error: any) {
+      throw this.mapError(error);
+    }
+
+    const content = completion.choices[0]?.message?.content;
+    if (!content) {
+      throw new LLMError("INVALID_RESPONSE", "Groq returned an empty response.", "groq", this.model);
+    }
+
+    try {
+      const parsed = JSON.parse(content);
+      return ProjectVocabularySchema.parse(parsed);
+    } catch (error: any) {
+      throw new LLMError("INVALID_RESPONSE", `Failed to parse or validate Groq vocabulary: ${error.message}`, "groq", this.model);
     }
   }
 

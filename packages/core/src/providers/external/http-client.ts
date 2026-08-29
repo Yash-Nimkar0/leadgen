@@ -30,7 +30,7 @@ export class ExternalHttpClient {
   }
 
   async get<T>(path: string, queryParams?: Record<string, string>): Promise<T> {
-    const url = new URL(`${this.baseUrl}${path}`);
+    console.log("Fetching: ", path, queryParams); const url = new URL(`${this.baseUrl}${path}`);
     if (queryParams) {
       Object.entries(queryParams).forEach(([key, value]) => {
         if (value) url.searchParams.append(key, value);

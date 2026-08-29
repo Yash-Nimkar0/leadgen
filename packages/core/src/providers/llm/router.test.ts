@@ -168,3 +168,79 @@ describe('LLMRouter', () => {
     await expect(router.classify(mockInput)).rejects.toThrow('LLMRouter: No providers could be initialized');
   });
 });
+
+describe('LLMRouter - Vocabulary Generation', () => {
+  const mockConfig = { name: 'test' };
+
+  it('should use openai as primary and not call groq on success', async () => {
+    const openaiSpy = vi.fn().mockResolvedValue({ entities: ['test'] });
+    const groqSpy = vi.fn();
+
+    const router = new LLMRouter();
+    (router as any).providers.set('openai', { generateVocabulary: openaiSpy, model: 'gpt-4o-mini' });
+    (router as any).providers.set('groq', { generateVocabulary: groqSpy, model: 'llama-3' });
+
+    const result = await router.generateVocabulary(mockConfig);
+    
+    expect(openaiSpy).toHaveBeenCalledTimes(1);
+    expect(groqSpy).not.toHaveBeenCalled();
+    expect((result as any)._routerMetadata.provider).toBe('openai');
+    expect((result as any)._routerMetadata.model).toBe('gpt-4o-mini');
+  });
+
+  it('should fallback to groq on openai RATE_LIMITED', async () => {
+    const openaiSpy = vi.fn().mockRejectedValue(new LLMError('RATE_LIMITED', 'rate limit', 'openai'));
+    const groqSpy = vi.fn().mockResolvedValue({ entities: ['test'] });
+
+    const router = new LLMRouter();
+    (router as any).providers.set('openai', { generateVocabulary: openaiSpy, model: 'gpt-4o-mini' });
+    (router as any).providers.set('groq', { generateVocabulary: groqSpy, model: 'llama-3' });
+
+    const result = await router.generateVocabulary(mockConfig);
+
+    expect(openaiSpy).toHaveBeenCalledTimes(2); // 1 initial + 1 retry
+    expect(groqSpy).toHaveBeenCalledTimes(1);
+    expect((result as any)._routerMetadata.provider).toBe('groq');
+  });
+
+  it('should fallback to groq on openai TIMEOUT', async () => {
+    const openaiSpy = vi.fn().mockRejectedValue(new LLMError('TIMEOUT', 'timeout', 'openai'));
+    const groqSpy = vi.fn().mockResolvedValue({ entities: ['test'] });
+
+    const router = new LLMRouter();
+    (router as any).providers.set('openai', { generateVocabulary: openaiSpy, model: 'gpt-4o-mini' });
+    (router as any).providers.set('groq', { generateVocabulary: groqSpy, model: 'llama-3' });
+
+    const result = await router.generateVocabulary(mockConfig);
+
+    expect(openaiSpy).toHaveBeenCalledTimes(2);
+    expect(groqSpy).toHaveBeenCalledTimes(1);
+    expect((result as any)._routerMetadata.provider).toBe('groq');
+  });
+
+  it('should fallback to groq on openai INVALID_RESPONSE (malformed output)', async () => {
+    const openaiSpy = vi.fn().mockRejectedValue(new LLMError('INVALID_RESPONSE', 'malformed', 'openai'));
+    const groqSpy = vi.fn().mockResolvedValue({ entities: ['test'] });
+
+    const router = new LLMRouter();
+    (router as any).providers.set('openai', { generateVocabulary: openaiSpy, model: 'gpt-4o-mini' });
+    (router as any).providers.set('groq', { generateVocabulary: groqSpy, model: 'llama-3' });
+
+    const result = await router.generateVocabulary(mockConfig);
+
+    expect(openaiSpy).toHaveBeenCalledTimes(1); // No retries for INVALID_RESPONSE
+    expect(groqSpy).toHaveBeenCalledTimes(1);
+    expect((result as any)._routerMetadata.provider).toBe('groq');
+  });
+
+  it('should throw if both openai and groq fail', async () => {
+    const openaiSpy = vi.fn().mockRejectedValue(new LLMError('TIMEOUT', 'timeout', 'openai'));
+    const groqSpy = vi.fn().mockRejectedValue(new LLMError('INVALID_RESPONSE', 'bad', 'groq'));
+
+    const router = new LLMRouter();
+    (router as any).providers.set('openai', { generateVocabulary: openaiSpy, model: 'gpt-4o-mini' });
+    (router as any).providers.set('groq', { generateVocabulary: groqSpy, model: 'llama-3' });
+
+    await expect(router.generateVocabulary(mockConfig)).rejects.toThrow('All vocabulary-capable providers failed.');
+  });
+});

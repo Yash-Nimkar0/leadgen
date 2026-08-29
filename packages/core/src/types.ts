@@ -6,6 +6,7 @@ export interface SourcePost {
   authorIdentifier: string;
   subreddit: string;
   publishedAt: Date;
+  provenance?: string;
   expected?: {
     intentType: IntentType;
     minIntentScore: number;
@@ -19,6 +20,7 @@ export interface FetchCandidatesInput {
     id: string;
     keywords: string[];
     sources: string[];
+    vocabulary?: any;
   };
 }
 

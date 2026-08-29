@@ -63,7 +63,7 @@ async function verify() {
 
   console.log('\nRecent Ingestion Runs:');
   runs.forEach(r => {
-    console.log(`- Run ID: ${r.id}, Status: ${r.status}, Discovered: ${r.postsDiscovered}, Filtered: ${r.postsFiltered}`);
+    console.log(`- Run ID: ${r.id}, Status: ${r.status}, Discovered: ${r.postsDiscovered}, PreFiltered: ${r.postsPreFiltered}, Invalid: ${r.postsInvalid}, Dupes: ${r.postsDuplicateLeads}, Classified: ${r.postsClassified}, Leads: ${r.leadsCreated}`);
   });
 
   // 5. Output some created leads

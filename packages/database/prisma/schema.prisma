@@ -95,17 +95,24 @@ model UserPreference {
 }
 
 model Project {
-  id                 String            @id @default(uuid())
-  userId             String
-  user               User              @relation(fields: [userId], references: [id])
-  name               String
-  productDescription String
-  keywords           Keyword[]
-  sources            MonitoredSource[]
-  leads              ProjectLead[]
-  ingestionRuns      IngestionRun[]
-  createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @updatedAt
+  id                   String            @id @default(uuid())
+  userId               String
+  user                 User              @relation(fields: [userId], references: [id])
+  name                 String
+  productDescription   String
+  idealCustomerProfile String?
+  exclusionRules       String?
+  vocabularyInputHash  String?
+  vocabularyGeneratedAt DateTime?
+  vocabularyProvider   String?
+  vocabularyModel      String?
+  vocabulary           Json?
+  keywords             Keyword[]
+  sources              MonitoredSource[]
+  leads                ProjectLead[]
+  ingestionRuns        IngestionRun[]
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
   
   @@index([userId])
 }
@@ -166,17 +173,19 @@ enum LeadOutcome {
 }
 
 model ProjectLead {
-  id           String             @id @default(uuid())
-  projectId    String
-  project      Project            @relation(fields: [projectId], references: [id])
-  redditPostId String
-  redditPost   RedditPost         @relation(fields: [redditPostId], references: [id])
-  analysis     Analysis?
-  alerts       Alert[]
-  discoveredAt DateTime           @default(now())
-  status       ProjectLeadStatus  @default(NEW)
-  feedback     LeadFeedback       @default(NONE)
-  outcome      LeadOutcome        @default(NONE)
+  id                               String             @id @default(uuid())
+  projectId                        String
+  project                          Project            @relation(fields: [projectId], references: [id])
+  redditPostId                     String
+  redditPost                       RedditPost         @relation(fields: [redditPostId], references: [id])
+  analysis                         Analysis?
+  alerts                           Alert[]
+  discoveredAt                     DateTime           @default(now())
+  status                           ProjectLeadStatus  @default(NEW)
+  feedback                         LeadFeedback       @default(NONE)
+  outcome                          LeadOutcome        @default(NONE)
+  provenance                       String?            // EXACT_QUERY, BROAD_QUERY, or BOTH
+  wouldHaveMatchedOldExactFilter   Boolean?
   
   @@unique([projectId, redditPostId])
   @@index([projectId])
@@ -234,9 +243,13 @@ model IngestionRun {
   startedAt       DateTime            @default(now())
   completedAt     DateTime?
   status          IngestionRunStatus  @default(RUNNING)
-  postsDiscovered Int                 @default(0)
-  postsFiltered   Int                 @default(0)
-  postsClassified Int                 @default(0)
+  postsDiscovered   Int               @default(0)
+  postsInvalid      Int               @default(0)
+  postsPreFiltered  Int               @default(0)
+  postsDuplicateLeads Int             @default(0)
+  postsClassified   Int               @default(0)
+  leadsCreated      Int               @default(0)
+  highIntentLeads   Int               @default(0)
   errorDetails    String?
   
   @@index([projectId])
