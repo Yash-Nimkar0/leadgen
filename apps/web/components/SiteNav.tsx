@@ -80,7 +80,7 @@ export function SiteNav() {
             <Link href="/login" className="font-terminal text-lg tracking-wide text-muted-foreground hover:text-foreground transition-colors">
               Sign in
             </Link>
-            <a href="/register" className={buttonVariants({ size: "sm" })}>
+            <a href="/register" className={buttonVariants({ size: "sm", className: "pointer-events-auto relative z-50" })}>
               [ Get started ]
             </a>
           </div>

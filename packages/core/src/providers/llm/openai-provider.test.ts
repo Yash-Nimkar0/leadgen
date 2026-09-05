@@ -38,7 +38,7 @@ describe('OpenAIProvider', () => {
     const provider = new OpenAIProvider();
     
     // Test classify uses model_A
-    const openaiInstance = vi.mocked(OpenAI).mock.results[0].value;
+    const openaiInstance = vi.mocked(OpenAI).mock.results[0]!.value;
     await provider.classify({
       projectConfig: { name: 'test', keywords: [], competitors: [] },
       post: { title: 'test', subreddit: 'test' }
