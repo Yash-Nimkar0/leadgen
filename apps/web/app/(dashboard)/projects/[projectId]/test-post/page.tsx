@@ -37,7 +37,8 @@ export default async function TestPostPage({
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Inbox
         </Link>
-        <h1 className="text-2xl font-bold tracking-tight">{project.name} - Test a Post</h1>
+        <p className="text-sm text-muted-foreground mb-1">{project.name}</p>
+        <h1 className="font-terminal text-4xl tracking-wide">Test a Post</h1>
         <p className="text-muted-foreground mt-1 text-sm">
           Manually validate the classifier against real posts you find yourself.
         </p>

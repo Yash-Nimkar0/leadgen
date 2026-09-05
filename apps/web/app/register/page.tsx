@@ -3,6 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { ArrowRight, Loader2 } from "lucide-react";
+import { LogoMark } from "../../components/Logo";
+import { Button } from "../../components/ui/Button";
+import { Input, Label } from "../../components/ui/Input";
 import { registerUser } from "../actions/auth-actions";
 
 export default function RegisterPage() {
@@ -19,88 +23,99 @@ export default function RegisterPage() {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    if (!email || !password) {
-      setError("Please fill in all fields");
-      setLoading(false);
-      return;
-    }
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters");
-      setLoading(false);
-      return;
-    }
-
     try {
       const result = await registerUser(email, password);
-      if (result.error) {
-        setError(result.error);
-      } else {
+
+      if (result.success) {
         router.push("/login?registered=true");
+      } else {
+        setError(result.error || "An error occurred during registration");
       }
-    } catch (err: unknown) {
-      setError("An unexpected error occurred. Please try again.");
+    } catch (err) {
+      setError("An unexpected error occurred");
     } finally {
       setLoading(false);
     }
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-muted/30 px-4">
-      <div className="w-full max-w-md space-y-8 rounded-xl border bg-background p-8 shadow-sm">
-        <div className="text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-primary">Create an account</h2>
-          <p className="mt-2 text-sm text-muted-foreground">Start monitoring Reddit for opportunities.</p>
+    <div className="min-h-screen flex flex-col justify-center bg-background selection:bg-signal selection:text-background scanlines">
+      <div className="sm:mx-auto sm:w-full sm:max-w-[400px] px-6">
+        <Link href="/" className="flex justify-center mb-8 hover:opacity-80 transition-opacity">
+          <div className="h-10 w-10 border-2 border-border bg-foreground flex items-center justify-center">
+            <LogoMark className="h-5 w-5 text-background" />
+          </div>
+        </Link>
+        <h2 className="text-center text-3xl font-terminal tracking-wide">
+          Create an account
+        </h2>
+        <p className="mt-2 text-center text-sm text-muted-foreground mb-8">
+          Start finding high-intent leads today
+        </p>
+
+        <div className="pixel-frame bg-card border-2 border-border shadow-pixel p-6 sm:p-8">
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            {error && (
+              <div className="border-2 border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive font-medium text-center animate-in fade-in slide-in-from-top-1">
+                {error}
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email address</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  placeholder="name@example.com"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
+
+            <Button type="submit" className="w-full mt-2" disabled={loading}>
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating account...
+                </>
+              ) : (
+                <>
+                  Create account
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </>
+              )}
+            </Button>
+            
+            <p className="text-xs text-center text-muted-foreground mt-4">
+              By clicking continue, you agree to our{" "}
+              <Link href="#" className="underline underline-offset-4 hover:text-foreground">Terms of Service</Link>
+              {" "}and{" "}
+              <Link href="#" className="underline underline-offset-4 hover:text-foreground">Privacy Policy</Link>.
+            </p>
+          </form>
         </div>
-        
-        {error && (
-          <div className="rounded-md bg-red-50 p-4 text-sm text-red-700">
-            {error}
-          </div>
-        )}
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="space-y-4 rounded-md shadow-sm">
-            <div>
-              <label htmlFor="email-address" className="sr-only">Email address</label>
-              <input
-                id="email-address"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="relative block w-full rounded-t-md border border-border px-3 py-2 text-foreground placeholder-muted-foreground focus:z-10 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm"
-                placeholder="Email address"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">Password</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                required
-                className="relative block w-full rounded-b-md border border-border px-3 py-2 text-foreground placeholder-muted-foreground focus:z-10 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary sm:text-sm"
-                placeholder="Password (min 8 characters)"
-              />
-            </div>
-          </div>
-
-          <div>
-            <button
-              type="submit"
-              disabled={loading}
-              className="group relative flex w-full justify-center rounded-md border border-transparent bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:opacity-70"
-            >
-              {loading ? "Creating account..." : "Sign up"}
-            </button>
-          </div>
-        </form>
-        <div className="text-center text-sm">
-          <Link href="/login" className="font-medium text-primary hover:underline">
-            Already have an account? Sign in
+        <p className="text-center text-sm text-muted-foreground mt-8">
+          Already have an account?{" "}
+          <Link href="/login" className="font-semibold text-foreground hover:text-primary transition-colors">
+            Sign in
           </Link>
-        </div>
+        </p>
       </div>
     </div>
   );

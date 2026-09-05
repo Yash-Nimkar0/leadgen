@@ -37,7 +37,7 @@ export function LeadSearch() {
       </div>
       <input
         type="text"
-        className="block w-full rounded-md border border-border bg-background py-1.5 pl-10 pr-3 text-sm placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+        className="block w-full border-2 border-border bg-background/60 py-1.5 pl-10 pr-3 font-terminal text-base tracking-wide placeholder:text-muted-foreground/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
         placeholder="Search leads..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}

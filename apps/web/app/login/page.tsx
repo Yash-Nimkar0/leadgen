@@ -4,11 +4,14 @@ import { useState, Suspense } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Activity } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
+import { LogoMark } from "../../components/Logo";
+import { Button } from "../../components/ui/Button";
+import { Input, Label } from "../../components/ui/Input";
 
 export default function LoginPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Loading...</div>}>
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">Loading...</div>}>
       <LoginForm />
     </Suspense>
   );
@@ -52,74 +55,83 @@ function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-muted/30">
-      <div className="w-full max-w-md space-y-8 bg-background p-8 rounded-xl shadow-sm border border-border">
-        <div className="text-center">
-          <Link href="/" className="inline-flex items-center space-x-2 mb-6">
-            <Activity className="h-6 w-6 text-primary" />
-            <span className="font-bold tracking-tight text-xl">Reddit Intent</span>
-          </Link>
-          <h2 className="text-2xl font-bold tracking-tight">Welcome back</h2>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Sign in to your account
-          </p>
+    <div className="min-h-screen flex flex-col justify-center bg-background selection:bg-signal selection:text-background scanlines">
+      <div className="sm:mx-auto sm:w-full sm:max-w-[400px] px-6">
+        <Link href="/" className="flex justify-center mb-8 hover:opacity-80 transition-opacity">
+          <div className="h-10 w-10 border-2 border-border bg-foreground flex items-center justify-center">
+            <LogoMark className="h-5 w-5 text-background" />
+          </div>
+        </Link>
+        <h2 className="text-center text-3xl font-terminal tracking-wide">
+          Welcome back
+        </h2>
+        <p className="mt-2 text-center text-sm text-muted-foreground mb-8">
+          Enter your credentials to access your workspace
+        </p>
+
+        <div className="pixel-frame bg-card border-2 border-border shadow-pixel p-6 sm:p-8">
+          <form className="space-y-5" onSubmit={handleSubmit}>
+            {error && (
+              <div className="border-2 border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive font-medium text-center animate-in fade-in slide-in-from-top-1">
+                {error}
+              </div>
+            )}
+            {registered && (
+              <div className="border-2 border-signal/50 bg-signal/10 p-3 text-sm text-signal font-medium text-center animate-in fade-in slide-in-from-top-1">
+                Account created successfully. Please sign in.
+              </div>
+            )}
+
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email address</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  placeholder="name@example.com"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">Password</Label>
+                  <Link href="#" className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors">
+                    Forgot password?
+                  </Link>
+                </div>
+                <Input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  placeholder="••••••••"
+                />
+              </div>
+            </div>
+
+            <Button type="submit" className="w-full mt-2" disabled={loading}>
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                <>
+                  Sign in
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </>
+              )}
+            </Button>
+          </form>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="rounded-md bg-destructive/15 p-3 text-sm text-destructive font-medium text-center">
-              {error}
-            </div>
-          )}
-          {registered && (
-            <div className="rounded-md bg-green-500/15 p-3 text-sm text-green-600 font-medium text-center">
-              Account created successfully. Please sign in.
-            </div>
-          )}
-
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                className="mt-1 block w-full rounded-md border border-border px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary bg-background"
-                placeholder="you@example.com"
-              />
-            </div>
-
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium">
-                Password
-              </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                className="mt-1 block w-full rounded-md border border-border px-3 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary bg-background"
-              />
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex w-full justify-center rounded-md bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground shadow-sm hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-70 transition-colors"
-          >
-            {loading ? "Signing in..." : "Sign in"}
-          </button>
-        </form>
-
-        <p className="text-center text-sm text-muted-foreground mt-6">
+        <p className="text-center text-sm text-muted-foreground mt-8">
           Don&apos;t have an account?{" "}
-          <Link href="/register" className="font-semibold text-primary hover:underline transition-colors">
+          <Link href="/register" className="font-semibold text-foreground hover:text-primary transition-colors">
             Sign up
           </Link>
         </p>

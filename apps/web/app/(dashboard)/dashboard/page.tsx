@@ -2,11 +2,10 @@ import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../../lib/auth";
 import { prisma } from "@repo/database";
 import Link from "next/link";
-import { ArrowRight, Plus, Activity, Layers } from "lucide-react";
 import { redirect } from "next/navigation";
-
-import { MockIngestionTrigger } from "../../../components/MockIngestionTrigger";
-import { ExternalIngestionTrigger } from "../../../components/ExternalIngestionTrigger";
+import { ArrowRight, Inbox, Zap, CheckCircle2 } from "lucide-react";
+import { LeadRow } from "../../../components/LeadRow";
+import { Button } from "../../../components/ui/Button";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -15,80 +14,114 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
-  const projects = await prisma.project.findMany({
-    where: { userId: session.user.id },
-    include: {
-      _count: {
-        select: { leads: true }
-      }
+  // Fetch all leads for this user's projects, ordered by score then date
+  const recentHighIntentLeads = await prisma.projectLead.findMany({
+    where: { 
+      project: { userId: session.user.id },
+      analysis: { finalScore: { gte: 80 } },
+      status: "NEW"
     },
-    orderBy: { createdAt: "desc" },
+    include: {
+      redditPost: true,
+      analysis: true,
+      project: true,
+    },
+    orderBy: [
+      { analysis: { finalScore: 'desc' } },
+      { discoveredAt: 'desc' }
+    ],
+    take: 5,
+  });
+
+  const recentReviewLeads = await prisma.projectLead.findMany({
+    where: { 
+      project: { userId: session.user.id },
+      analysis: { finalScore: { gte: 70, lt: 80 } },
+      status: "NEW"
+    },
+    include: {
+      redditPost: true,
+      analysis: true,
+      project: true,
+    },
+    orderBy: [
+      { analysis: { finalScore: 'desc' } },
+      { discoveredAt: 'desc' }
+    ],
+    take: 5,
+  });
+
+  const projects = await prisma.project.findMany({
+    where: { userId: session.user.id }
   });
 
   return (
-    <div className="p-6 md:p-8 space-y-8 max-w-5xl mx-auto">
-      <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Overview</h1>
-          <p className="text-muted-foreground mt-2">
-            Monitor your projects and high-intent Reddit leads.
-          </p>
-        </div>
+    <div className="p-6 md:p-12 space-y-12 max-w-5xl mx-auto w-full">
+      <div className="space-y-1">
+        <h1 className="font-terminal text-4xl tracking-wide text-foreground">Good morning.</h1>
+        <p className="text-muted-foreground text-lg">Here are your highest-intent opportunities today.</p>
       </div>
 
-      <MockIngestionTrigger />
-      <ExternalIngestionTrigger />
-
       {projects.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-border bg-muted/30 p-12 text-center flex flex-col items-center justify-center">
-          <div className="rounded-full bg-primary/10 p-4 mb-4">
-            <Layers className="h-8 w-8 text-primary" />
+        <div className="pixel-frame border-2 border-dashed border-border bg-card/40 p-12 text-center flex flex-col items-center justify-center max-w-2xl mx-auto">
+          <div className="h-16 w-16 border-2 border-border bg-background flex items-center justify-center mb-6">
+            <Zap className="h-6 w-6 text-signal" />
           </div>
-          <h2 className="text-xl font-semibold mb-2">Create your first project</h2>
-          <p className="text-muted-foreground mb-6 max-w-md">
-            Start finding high-intent leads by setting up a project with keywords and target subreddits.
+          <h2 className="font-terminal text-3xl mb-3 tracking-wide">You&apos;re ready to find opportunities.</h2>
+          <p className="text-muted-foreground mb-8 text-base">
+            Configure your first pipeline to tell us what you sell, and we&apos;ll start surfacing conversations worth your attention.
           </p>
-          <Link
-            href="/projects/new"
-            className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-          >
-            <Plus className="mr-2 h-4 w-4" />
-            New Project
+          <Link href="/projects/new">
+            <Button size="lg">
+              [ Create your first pipeline ]
+            </Button>
           </Link>
         </div>
       ) : (
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {projects.map((project) => (
-            <Link
-              key={project.id}
-              href={`/projects/${project.id}/leads`}
-              className="group flex flex-col justify-between rounded-xl border border-border bg-background p-6 shadow-sm transition-all hover:shadow-md hover:border-primary/30"
-            >
-              <div>
-                <h3 className="font-semibold text-lg group-hover:text-primary transition-colors">
-                  {project.name}
-                </h3>
-                <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                  {project.productDescription}
-                </p>
+        <div className="space-y-12">
+          {recentHighIntentLeads.length > 0 && (
+            <section className="space-y-4">
+              <div className="flex items-center justify-between border-b border-border/50 pb-2">
+                <h2 className="font-terminal text-lg tracking-widest uppercase text-muted-foreground flex items-center">
+                  <Zap className="mr-2 h-4 w-4 text-signal" />
+                  High Intent (80+)
+                </h2>
               </div>
-              <div className="mt-6 flex items-center justify-between border-t border-border pt-4">
-                <div className="flex items-center space-x-1 text-sm font-medium">
-                  <Activity className="h-4 w-4 text-primary" />
-                  <span>{project._count.leads} Leads</span>
-                </div>
-                <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+              <div className="space-y-3">
+                {recentHighIntentLeads.map((lead) => (
+                  <LeadRow key={lead.id} lead={lead} />
+                ))}
               </div>
-            </Link>
-          ))}
-          
-          <Link
-            href="/projects/new"
-            className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-muted/20 p-6 text-muted-foreground transition-all hover:bg-muted/50 hover:text-foreground"
-          >
-            <Plus className="h-8 w-8 mb-2 opacity-50" />
-            <span className="font-medium">New Project</span>
-          </Link>
+            </section>
+          )}
+
+          {recentReviewLeads.length > 0 && (
+            <section className="space-y-4">
+              <div className="flex items-center justify-between border-b border-border/50 pb-2">
+                <h2 className="font-terminal text-lg tracking-widest uppercase text-muted-foreground flex items-center">
+                  <CheckCircle2 className="mr-2 h-4 w-4 text-amber" />
+                  Needs Review (70-79)
+                </h2>
+              </div>
+              <div className="space-y-3">
+                {recentReviewLeads.map((lead) => (
+                  <LeadRow key={lead.id} lead={lead} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {recentHighIntentLeads.length === 0 && recentReviewLeads.length === 0 && (
+            <div className="border-2 border-border bg-card p-12 text-center flex flex-col items-center justify-center">
+              <div className="h-12 w-12 border-2 border-border bg-muted/50 flex items-center justify-center mb-4">
+                <Inbox className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <h3 className="font-terminal text-xl mb-1">Inbox Zero</h3>
+              <p className="text-muted-foreground text-sm">
+                No new high-intent opportunities right now. We&apos;ll keep monitoring.
+              </p>
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -2,7 +2,9 @@
 
 import { useState } from "react";
 import { updateNotificationSettings } from "../app/actions/user-settings-actions";
-import { Save } from "lucide-react";
+import { Save, Loader2 } from "lucide-react";
+import { Button } from "./ui/Button";
+import { Label } from "./ui/Input";
 
 export function UserSettingsForm({
   initialMinimumIntentScore,
@@ -38,21 +40,21 @@ export function UserSettingsForm({
   return (
     <form className="p-6 space-y-6" onSubmit={handleSubmit}>
       {error && (
-        <div className="rounded-md bg-red-50 p-4 text-sm text-red-700">
+        <div className="border-2 border-destructive/50 bg-destructive/10 p-4 text-sm text-destructive">
           {error}
         </div>
       )}
       {success && (
-        <div className="rounded-md bg-green-50 p-4 text-sm text-green-700">
+        <div className="border-2 border-signal/50 bg-signal/10 p-4 text-sm text-signal">
           Settings updated successfully.
         </div>
       )}
 
       <div className="space-y-4">
         <div>
-          <label htmlFor="minimumIntentScore" className="block text-sm font-medium">
+          <Label htmlFor="minimumIntentScore" className="block">
             Notification threshold (Minimum Intent Score)
-          </label>
+          </Label>
           <p className="text-sm text-muted-foreground mt-1 mb-2">
             Notify me for opportunities scoring at least this value (0-100).
           </p>
@@ -70,14 +72,10 @@ export function UserSettingsForm({
       </div>
 
       <div className="pt-4 border-t border-border flex justify-end">
-        <button
-          type="submit"
-          disabled={loading}
-          className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:opacity-70"
-        >
-          <Save className="mr-2 h-4 w-4" />
+        <Button type="submit" disabled={loading}>
+          {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
           {loading ? "Saving..." : "Save Changes"}
-        </button>
+        </Button>
       </div>
     </form>
   );

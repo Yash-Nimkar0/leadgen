@@ -52,10 +52,10 @@ export function MockIngestionTrigger() {
         </button>
         
         {result?.error && (
-          <span className="text-xs text-red-500">{result.error}</span>
+          <span className="text-xs text-destructive">{result.error}</span>
         )}
         {result?.processed !== undefined && (
-          <span className="text-xs text-green-600 dark:text-green-400">
+          <span className="text-xs text-signal">
             Success: Processed {result.processed} posts, created {result.matched} leads.
           </span>
         )}

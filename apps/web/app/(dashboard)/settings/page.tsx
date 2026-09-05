@@ -18,7 +18,7 @@ export default async function SettingsPage() {
   return (
     <div className="p-6 md:p-8 max-w-3xl mx-auto space-y-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Settings</h1>
+        <h1 className="font-terminal text-4xl tracking-wide">Settings</h1>
         <p className="text-muted-foreground mt-2">
           Manage your account preferences and notifications.
         </p>

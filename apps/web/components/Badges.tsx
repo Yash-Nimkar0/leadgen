@@ -1,73 +1,79 @@
-export function IntentBadge({ score }: { score: number }) {
-  let label = "LOW INTENT";
-  let colorClass = "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
-  
+import { cn } from "../lib/utils";
+
+const badgeBase = "inline-flex items-center px-2 py-0.5 font-terminal text-sm tracking-widest uppercase border-2";
+
+export function IntentBadge({ score, className }: { score: number, className?: string }) {
+  let label = "LOW RELEVANCE";
+  let colorClass = "bg-muted text-muted-foreground border-border";
+
   if (score >= 80) {
     label = "HIGH INTENT";
-    colorClass = "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
-  } else if (score >= 60) {
-    label = "MEDIUM INTENT";
-    colorClass = "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400";
+    colorClass = "bg-signal/10 text-signal border-signal/50";
+  } else if (score >= 70) {
+    label = "NEEDS REVIEW";
+    colorClass = "bg-amber/10 text-amber border-amber/50";
   }
 
   return (
-    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${colorClass}`}>
-      {label} ({score})
+    <span className={cn(badgeBase, colorClass, className)}>
+      {label}
+      <span className="ml-1.5 opacity-70">{score}</span>
     </span>
   );
 }
 
-export function StatusBadge({ status }: { status: "NEW" | "VIEWED" | "DISMISSED" }) {
-  let colorClass = "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
-  
+export function StatusBadge({ status, className }: { status: "NEW" | "VIEWED" | "DISMISSED", className?: string }) {
+  let colorClass = "bg-muted text-muted-foreground border-border";
+
   if (status === "NEW") {
-    colorClass = "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
+    colorClass = "bg-primary/10 text-primary border-primary/50";
   } else if (status === "DISMISSED") {
-    colorClass = "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-500 line-through";
+    colorClass = "bg-muted/50 text-muted-foreground/50 border-border/50 line-through";
   }
 
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${colorClass}`}>
+    <span className={cn(badgeBase, colorClass, className)}>
       {status}
     </span>
   );
 }
 
-export function FeedbackBadge({ feedback }: { feedback: "NONE" | "GOOD" | "BAD" | "NOT_RELEVANT" }) {
+export function FeedbackBadge({ feedback, className }: { feedback: "NONE" | "GOOD" | "BAD" | "NOT_RELEVANT", className?: string }) {
   if (feedback === "NONE") return null;
 
-  let colorClass = "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
+  let colorClass = "bg-muted text-muted-foreground border-border";
   let label: string = feedback;
 
   if (feedback === "GOOD") {
-    colorClass = "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
+    colorClass = "bg-signal/10 text-signal border-signal/50";
+    label = "GOOD LEAD";
   } else if (feedback === "BAD") {
-    colorClass = "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400";
+    colorClass = "bg-destructive/10 text-destructive border-destructive/50";
   } else if (feedback === "NOT_RELEVANT") {
-    colorClass = "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-500";
+    colorClass = "bg-muted text-muted-foreground border-border";
     label = "NOT RELEVANT";
   }
 
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${colorClass}`}>
+    <span className={cn(badgeBase, colorClass, className)}>
       {label}
     </span>
   );
 }
 
-export function OutcomeBadge({ outcome }: { outcome: "NONE" | "CONTACTED" | "CONVERTED" }) {
+export function OutcomeBadge({ outcome, className }: { outcome: "NONE" | "CONTACTED" | "CONVERTED", className?: string }) {
   if (outcome === "NONE") return null;
 
-  let colorClass = "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300";
+  let colorClass = "bg-muted text-muted-foreground border-border";
 
   if (outcome === "CONTACTED") {
-    colorClass = "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400";
+    colorClass = "bg-amber/10 text-amber border-amber/50";
   } else if (outcome === "CONVERTED") {
-    colorClass = "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400";
+    colorClass = "bg-signal/10 text-signal border-signal/50";
   }
 
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${colorClass}`}>
+    <span className={cn(badgeBase, colorClass, className)}>
       {outcome}
     </span>
   );

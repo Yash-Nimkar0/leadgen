@@ -39,7 +39,7 @@ export default async function ProjectSettingsPage({
           <ArrowLeft className="mr-2 h-4 w-4" />
           Back to Inbox
         </Link>
-        <h1 className="text-3xl font-bold tracking-tight">Project Settings</h1>
+        <h1 className="font-terminal text-4xl tracking-wide">Project Settings</h1>
         <p className="text-muted-foreground mt-2">
           Update your project configuration and tracking parameters.
         </p>

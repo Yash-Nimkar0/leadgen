@@ -3,7 +3,10 @@
 import { useState } from "react";
 import { testPost } from "../app/actions/test-post-actions";
 import { IntentBadge } from "./Badges";
-import { FlaskConical } from "lucide-react";
+import { FlaskConical, Loader2 } from "lucide-react";
+import { Button } from "./ui/Button";
+import { Label } from "./ui/Input";
+import { ScoreDial } from "./ScoreDial";
 
 type Result = {
   finalScore: number;
@@ -68,11 +71,11 @@ export function TestPostForm({ projectId }: { projectId: string }) {
           </div>
 
           {error && (
-            <div className="rounded-md bg-red-50 p-3 text-sm text-red-700">{error}</div>
+            <div className="border-2 border-destructive/50 bg-destructive/10 p-3 text-sm text-destructive">{error}</div>
           )}
 
           <div>
-            <label htmlFor="title" className="block text-sm font-medium">Post title</label>
+            <Label htmlFor="title" className="block">Post title</Label>
             <input
               id="title"
               name="title"
@@ -84,7 +87,7 @@ export function TestPostForm({ projectId }: { projectId: string }) {
           </div>
 
           <div>
-            <label htmlFor="body" className="block text-sm font-medium">Post body (optional)</label>
+            <Label htmlFor="body" className="block">Post body (optional)</Label>
             <textarea
               id="body"
               name="body"
@@ -96,7 +99,7 @@ export function TestPostForm({ projectId }: { projectId: string }) {
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label htmlFor="subreddit" className="block text-sm font-medium">Subreddit (optional)</label>
+              <Label htmlFor="subreddit" className="block">Subreddit (optional)</Label>
               <input
                 id="subreddit"
                 name="subreddit"
@@ -106,7 +109,7 @@ export function TestPostForm({ projectId }: { projectId: string }) {
               />
             </div>
             <div>
-              <label htmlFor="competitors" className="block text-sm font-medium">Named competitors mentioned (optional)</label>
+              <Label htmlFor="competitors" className="block">Named competitors mentioned (optional)</Label>
               <input
                 id="competitors"
                 name="competitors"
@@ -118,13 +121,10 @@ export function TestPostForm({ projectId }: { projectId: string }) {
           </div>
 
           <div className="pt-2 flex justify-end">
-            <button
-              type="submit"
-              disabled={loading}
-              className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 disabled:opacity-70"
-            >
+            <Button type="submit" disabled={loading}>
+              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {loading ? "Classifying..." : "Test this post"}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
@@ -140,24 +140,24 @@ export function TestPostForm({ projectId }: { projectId: string }) {
             </div>
 
             <div className="rounded-lg border border-border p-4 bg-background shadow-sm">
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">Problem Summary</h3>
+              <h3 className="font-terminal text-sm tracking-widest uppercase text-muted-foreground mb-1">Problem Summary</h3>
               <p className="text-foreground text-sm">{result.classification.problemSummary || "None identified"}</p>
             </div>
 
             <div className="rounded-lg border border-border p-4 bg-background shadow-sm">
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">Why It Matters (Commercial Intent)</h3>
+              <h3 className="font-terminal text-sm tracking-widest uppercase text-muted-foreground mb-1">Why It Matters (Commercial Intent)</h3>
               <p className="text-foreground text-sm">{result.classification.whyItMatters}</p>
             </div>
 
             <div className="rounded-lg border border-border p-4 bg-background shadow-sm">
-              <h3 className="text-sm font-medium text-muted-foreground mb-1">Recommended Action</h3>
+              <h3 className="font-terminal text-sm tracking-widest uppercase text-muted-foreground mb-1">Recommended Action</h3>
               <p className="text-foreground text-sm">{result.classification.summary}</p>
             </div>
           </div>
 
           <div className="md:col-span-1">
             <div className="rounded-xl border border-border bg-muted/20 p-5 space-y-4">
-              <h3 className="font-semibold pb-3 border-b border-border/50">Lead Details</h3>
+              <h3 className="font-terminal text-sm tracking-widest uppercase text-muted-foreground pb-3 border-b border-border/50">Lead Details</h3>
 
               <div>
                 <span className="block text-xs font-medium text-muted-foreground mb-1">Buying Stage</span>
@@ -166,10 +166,7 @@ export function TestPostForm({ projectId }: { projectId: string }) {
 
               <div>
                 <span className="block text-xs font-medium text-muted-foreground mb-1">Score Breakdown</span>
-                <div className="flex items-end gap-2">
-                  <span className="text-2xl font-bold">{result.finalScore}</span>
-                  <span className="text-sm text-muted-foreground mb-0.5">/ 100 final score</span>
-                </div>
+                <ScoreDial score={result.finalScore} />
                 <div className="mt-1 text-xs text-muted-foreground">
                   Relevance {result.classification.relevance} &middot; Intent signal {result.classification.commercialIntent}
                 </div>

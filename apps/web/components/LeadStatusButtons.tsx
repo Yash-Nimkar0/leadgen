@@ -1,9 +1,10 @@
 "use client";
 
 import { updateLeadStatus, updateLeadFeedback, updateLeadOutcome } from "../app/actions/lead-actions";
-import { Check, X, Undo, ThumbsUp, ThumbsDown, Slash, Phone, Trophy } from "lucide-react";
+import { Check, X, Undo, ThumbsUp, ThumbsDown, Slash, Phone, Trophy, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { Button } from "./ui/Button";
 
 export function LeadStatusButtons({
   projectId,
@@ -19,156 +20,148 @@ export function LeadStatusButtons({
   currentOutcome: "NONE" | "CONTACTED" | "CONVERTED";
 }) {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  // Tracks which specific action is in flight (e.g. "status:VIEWED") rather
+  // than a single boolean — every other button still disables while any
+  // action is pending, but only the one actually clicked shows a spinner.
+  const [pending, setPending] = useState<string | null>(null);
+  const loading = pending !== null;
 
   const handleStatusChange = async (status: "NEW" | "VIEWED" | "DISMISSED") => {
-    setLoading(true);
+    setPending(`status:${status}`);
     await updateLeadStatus(projectId, leadId, status);
     router.refresh();
-    setLoading(false);
+    setPending(null);
   };
 
   const handleFeedbackChange = async (feedback: "NONE" | "GOOD" | "BAD" | "NOT_RELEVANT") => {
-    setLoading(true);
+    setPending(`feedback:${feedback}`);
     await updateLeadFeedback(projectId, leadId, feedback);
     router.refresh();
-    setLoading(false);
+    setPending(null);
   };
 
   const handleOutcomeChange = async (outcome: "NONE" | "CONTACTED" | "CONVERTED") => {
-    setLoading(true);
+    setPending(`outcome:${outcome}`);
     await updateLeadOutcome(projectId, leadId, outcome);
     router.refresh();
-    setLoading(false);
+    setPending(null);
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="grid sm:grid-cols-3 gap-8">
       
       {/* Lifecycle Actions */}
-      <div>
-        <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Lifecycle</h4>
-        <div className="flex flex-wrap gap-2">
+      <div className="space-y-3">
+        <h4 className="font-terminal text-sm uppercase tracking-widest text-muted-foreground">Lifecycle</h4>
+        <div className="flex flex-col gap-2">
           {currentStatus === "NEW" && (
-            <button
+            <Button
               disabled={loading}
               onClick={() => handleStatusChange("VIEWED")}
-              className="inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 disabled:opacity-50"
+              className="w-full justify-start"
             >
-              <Check className="mr-2 h-4 w-4" />
+              {pending === "status:VIEWED" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Check className="mr-2 h-4 w-4" />}
               Mark Viewed
-            </button>
+            </Button>
           )}
 
           {currentStatus === "VIEWED" && (
-            <button
+            <Button
+              variant="secondary"
               disabled={loading}
               onClick={() => handleStatusChange("NEW")}
-              className="inline-flex items-center rounded-md bg-secondary px-3 py-2 text-sm font-medium text-secondary-foreground shadow-sm hover:bg-secondary/80 disabled:opacity-50"
+              className="w-full justify-start border-transparent bg-muted/50 hover:bg-muted"
             >
-              <Undo className="mr-2 h-4 w-4" />
+              {pending === "status:NEW" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Undo className="mr-2 h-4 w-4" />}
               Mark Unread
-            </button>
+            </Button>
           )}
 
           {currentStatus !== "DISMISSED" && (
-            <button
+            <Button
+              variant="outline"
               disabled={loading}
               onClick={() => handleStatusChange("DISMISSED")}
-              className="inline-flex items-center rounded-md bg-secondary px-3 py-2 text-sm font-medium text-secondary-foreground shadow-sm hover:bg-secondary/80 disabled:opacity-50"
+              className="w-full justify-start text-muted-foreground hover:text-foreground"
             >
-              <X className="mr-2 h-4 w-4" />
+              {pending === "status:DISMISSED" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <X className="mr-2 h-4 w-4" />}
               Dismiss
-            </button>
+            </Button>
           )}
 
           {currentStatus === "DISMISSED" && (
-            <button
+            <Button
+              variant="outline"
               disabled={loading}
               onClick={() => handleStatusChange("NEW")}
-              className="inline-flex items-center rounded-md bg-secondary px-3 py-2 text-sm font-medium text-secondary-foreground shadow-sm hover:bg-secondary/80 disabled:opacity-50"
+              className="w-full justify-start text-muted-foreground hover:text-foreground"
             >
-              <Undo className="mr-2 h-4 w-4" />
+              {pending === "status:NEW" ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Undo className="mr-2 h-4 w-4" />}
               Restore
-            </button>
+            </Button>
           )}
         </div>
       </div>
 
       {/* Feedback Actions */}
-      <div>
-        <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Feedback</h4>
-        <div className="flex flex-wrap gap-2">
-          <button
+      <div className="space-y-3">
+        <h4 className="font-terminal text-sm uppercase tracking-widest text-muted-foreground">Feedback</h4>
+        <div className="flex flex-col gap-2">
+          <Button
             disabled={loading}
+            variant={currentFeedback === "GOOD" ? "default" : "outline"}
             onClick={() => handleFeedbackChange(currentFeedback === "GOOD" ? "NONE" : "GOOD")}
-            className={`inline-flex items-center rounded-md px-3 py-2 text-sm font-medium shadow-sm transition-colors disabled:opacity-50 ${
-              currentFeedback === "GOOD" 
-                ? "bg-green-600 text-white hover:bg-green-700" 
-                : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-            }`}
+            className={`w-full justify-start ${currentFeedback === "GOOD" ? "bg-signal hover:brightness-110 text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
           >
-            <ThumbsUp className="mr-2 h-4 w-4" />
+            {pending === `feedback:${currentFeedback === "GOOD" ? "NONE" : "GOOD"}` ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ThumbsUp className="mr-2 h-4 w-4" />}
             Good Lead
-          </button>
-          
-          <button
-            disabled={loading}
-            onClick={() => handleFeedbackChange(currentFeedback === "BAD" ? "NONE" : "BAD")}
-            className={`inline-flex items-center rounded-md px-3 py-2 text-sm font-medium shadow-sm transition-colors disabled:opacity-50 ${
-              currentFeedback === "BAD" 
-                ? "bg-red-600 text-white hover:bg-red-700" 
-                : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-            }`}
-          >
-            <ThumbsDown className="mr-2 h-4 w-4" />
-            Bad Lead
-          </button>
+          </Button>
 
-          <button
+          <Button
             disabled={loading}
-            onClick={() => handleFeedbackChange(currentFeedback === "NOT_RELEVANT" ? "NONE" : "NOT_RELEVANT")}
-            className={`inline-flex items-center rounded-md px-3 py-2 text-sm font-medium shadow-sm transition-colors disabled:opacity-50 ${
-              currentFeedback === "NOT_RELEVANT" 
-                ? "bg-gray-600 text-white hover:bg-gray-700" 
-                : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-            }`}
+            variant={currentFeedback === "BAD" ? "default" : "outline"}
+            onClick={() => handleFeedbackChange(currentFeedback === "BAD" ? "NONE" : "BAD")}
+            className={`w-full justify-start ${currentFeedback === "BAD" ? "bg-destructive hover:bg-destructive/90 text-destructive-foreground" : "text-muted-foreground hover:text-foreground"}`}
           >
-            <Slash className="mr-2 h-4 w-4" />
+            {pending === `feedback:${currentFeedback === "BAD" ? "NONE" : "BAD"}` ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <ThumbsDown className="mr-2 h-4 w-4" />}
+            Bad Lead
+          </Button>
+
+          <Button
+            disabled={loading}
+            variant={currentFeedback === "NOT_RELEVANT" ? "secondary" : "outline"}
+            onClick={() => handleFeedbackChange(currentFeedback === "NOT_RELEVANT" ? "NONE" : "NOT_RELEVANT")}
+            className="w-full justify-start text-muted-foreground hover:text-foreground"
+          >
+            {pending === `feedback:${currentFeedback === "NOT_RELEVANT" ? "NONE" : "NOT_RELEVANT"}` ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Slash className="mr-2 h-4 w-4" />}
             Not Relevant
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Outcome Actions */}
-      <div>
-        <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Outcome</h4>
-        <div className="flex flex-wrap gap-2">
-          <button
+      <div className="space-y-3">
+        <h4 className="font-terminal text-sm uppercase tracking-widest text-muted-foreground">Outcome</h4>
+        <div className="flex flex-col gap-2">
+          <Button
             disabled={loading}
+            variant={currentOutcome === "CONTACTED" ? "default" : "outline"}
             onClick={() => handleOutcomeChange(currentOutcome === "CONTACTED" ? "NONE" : "CONTACTED")}
-            className={`inline-flex items-center rounded-md px-3 py-2 text-sm font-medium shadow-sm transition-colors disabled:opacity-50 ${
-              currentOutcome === "CONTACTED" 
-                ? "bg-blue-600 text-white hover:bg-blue-700" 
-                : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-            }`}
+            className={`w-full justify-start ${currentOutcome === "CONTACTED" ? "bg-amber hover:brightness-110 text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
           >
-            <Phone className="mr-2 h-4 w-4" />
+            {pending === `outcome:${currentOutcome === "CONTACTED" ? "NONE" : "CONTACTED"}` ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Phone className="mr-2 h-4 w-4" />}
             Contacted
-          </button>
+          </Button>
 
-          <button
+          <Button
             disabled={loading}
+            variant={currentOutcome === "CONVERTED" ? "default" : "outline"}
             onClick={() => handleOutcomeChange(currentOutcome === "CONVERTED" ? "NONE" : "CONVERTED")}
-            className={`inline-flex items-center rounded-md px-3 py-2 text-sm font-medium shadow-sm transition-colors disabled:opacity-50 ${
-              currentOutcome === "CONVERTED" 
-                ? "bg-green-600 text-white hover:bg-green-700" 
-                : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-            }`}
+            className={`w-full justify-start ${currentOutcome === "CONVERTED" ? "bg-signal hover:brightness-110 text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
           >
-            <Trophy className="mr-2 h-4 w-4" />
+            {pending === `outcome:${currentOutcome === "CONVERTED" ? "NONE" : "CONVERTED"}` ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Trophy className="mr-2 h-4 w-4" />}
             Converted
-          </button>
+          </Button>
         </div>
       </div>
 
