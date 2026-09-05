@@ -101,12 +101,12 @@ export function ViewportStage() {
               Find the exact conversations where your product is the missing piece.
             </p>
             <div className="flex flex-col sm:flex-row gap-5 justify-center md:justify-start">
-              <a href="/register" className={buttonVariants({ size: "lg", className: "pointer-events-auto relative z-50 w-full sm:w-auto bg-signal text-primary-foreground shadow-pixel-signal text-lg h-14 px-8" })}>
+              <Link href="/register" className={buttonVariants({ size: "lg", className: "pointer-events-auto relative z-50 w-full sm:w-auto bg-signal text-primary-foreground shadow-pixel-signal text-lg h-14 px-8" })}>
                 [ Start scanning ]
-              </a>
-              <a href="#demo" className={buttonVariants({ variant: "outline", size: "lg", className: "pointer-events-auto relative z-50 w-full sm:w-auto text-lg h-14 px-8 bg-background/50 backdrop-blur-sm" })}>
+              </Link>
+              <Link href="#demo" className={buttonVariants({ variant: "outline", size: "lg", className: "pointer-events-auto relative z-50 w-full sm:w-auto text-lg h-14 px-8 bg-background/50 backdrop-blur-sm" })}>
                 See how it works
-              </a>
+              </Link>
             </div>
           </div>
         </div>

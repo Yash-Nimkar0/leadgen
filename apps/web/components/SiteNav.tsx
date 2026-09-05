@@ -7,9 +7,9 @@ import { Logo } from "./Logo";
 import { Button, buttonVariants } from "./ui/Button";
 
 const LINKS = [
-  { href: "#product", label: "Product" },
-  { href: "#how-it-works", label: "How it works" },
-  { href: "#use-cases", label: "Use cases" },
+  { href: "#observatory", label: "The Observatory" },
+  { href: "#demo", label: "Scan Demo" },
+  { href: "#footer", label: "The Outpost" },
 ];
 
 function NavLink({ href, label, active }: { href: string; label: string; active: boolean }) {
@@ -80,9 +80,9 @@ export function SiteNav() {
             <Link href="/login" className="font-terminal text-lg tracking-wide text-muted-foreground hover:text-foreground transition-colors">
               Sign in
             </Link>
-            <a href="/register" className={buttonVariants({ size: "sm", className: "pointer-events-auto relative z-50" })}>
+            <Link href="/register" className={buttonVariants({ size: "sm", className: "pointer-events-auto relative z-50" })}>
               [ Get started ]
-            </a>
+            </Link>
           </div>
         </div>
       </div>
