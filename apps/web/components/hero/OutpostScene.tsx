@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Link from "next/link";
-import { Button } from "../ui/Button";
+import { Button, buttonVariants } from "../ui/Button";
 import { ArrowRight } from "lucide-react";
 
 export function OutpostScene() {
@@ -113,13 +113,11 @@ export function OutpostScene() {
                 <div className="group block relative">
                   {/* Physical Gate Frame */}
                   <div className="absolute -inset-1.5 bg-amber-950/80 border border-amber-500/30 shadow-[inset_0_0_10px_rgba(245,158,11,0.2),0_0_20px_rgba(245,158,11,0.3)] rounded-sm z-0 pointer-events-none" />
-                  <Button size="lg" asChild className="relative z-10 bg-[#0A0D14] border border-amber-500/50 text-amber-500 hover:bg-amber-500 hover:text-black hover:border-amber-500 focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0D14] transition-all font-terminal uppercase tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.2)] group-hover:shadow-[0_0_25px_#f59e0b]">
-                    <Link href="/register">
-                      [ Start scanning
-                      <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-                      ]
-                    </Link>
-                  </Button>
+                  <Link href="/register" className={buttonVariants({ size: "lg", className: "relative z-10 bg-[#0A0D14] border border-amber-500/50 text-amber-500 hover:bg-amber-500 hover:text-black hover:border-amber-500 focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0A0D14] transition-all font-terminal uppercase tracking-widest shadow-[0_0_15px_rgba(245,158,11,0.2)] group-hover:shadow-[0_0_25px_#f59e0b]" })}>
+                    [ Start scanning
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                    ]
+                  </Link>
                 </div>
               </motion.div>
             </div>

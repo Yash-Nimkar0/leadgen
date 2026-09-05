@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { Logo } from "./Logo";
-import { Button } from "./ui/Button";
+import { Button, buttonVariants } from "./ui/Button";
 
 const LINKS = [
   { href: "#product", label: "Product" },
@@ -80,11 +80,9 @@ export function SiteNav() {
             <Link href="/login" className="font-terminal text-lg tracking-wide text-muted-foreground hover:text-foreground transition-colors">
               Sign in
             </Link>
-            <Button size="sm" asChild>
-              <Link href="/register">
-                [ Get started ]
-              </Link>
-            </Button>
+            <Link href="/register" className={buttonVariants({ size: "sm" })}>
+              [ Get started ]
+            </Link>
           </div>
         </div>
       </div>

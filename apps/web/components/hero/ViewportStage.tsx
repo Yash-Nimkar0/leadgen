@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from "framer-motion";
 import Link from "next/link";
-import { Button } from "../ui/Button";
+import { Button, buttonVariants } from "../ui/Button";
 import { ArrowRight } from "lucide-react";
 import { ActionScene } from "./ActionScene";
 
@@ -101,16 +101,12 @@ export function ViewportStage() {
               Find the exact conversations where your product is the missing piece.
             </p>
             <div className="flex flex-col sm:flex-row gap-5 justify-center md:justify-start">
-              <Button size="lg" asChild className="w-full sm:w-auto bg-signal text-primary-foreground shadow-pixel-signal text-lg h-14 px-8">
-                <Link href="/register">
-                  [ Start scanning ]
-                </Link>
-              </Button>
-              <Button variant="outline" size="lg" asChild className="w-full sm:w-auto text-lg h-14 px-8 bg-background/50 backdrop-blur-sm">
-                <Link href="#product">
-                  See how it works
-                </Link>
-              </Button>
+              <Link href="/register" className={buttonVariants({ size: "lg", className: "w-full sm:w-auto bg-signal text-primary-foreground shadow-pixel-signal text-lg h-14 px-8" })}>
+                [ Start scanning ]
+              </Link>
+              <Link href="#product" className={buttonVariants({ variant: "outline", size: "lg", className: "w-full sm:w-auto text-lg h-14 px-8 bg-background/50 backdrop-blur-sm" })}>
+                See how it works
+              </Link>
             </div>
           </div>
         </div>

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Home, Plus, Inbox, Settings } from "lucide-react";
 import { cn } from "../lib/utils";
-import { Button } from "./ui/Button";
+import { Button, buttonVariants } from "./ui/Button";
 
 type Project = { id: string; name: string };
 
@@ -61,11 +61,9 @@ export function DashboardNav({ projects }: { projects: Project[] }) {
           <h3 className="font-terminal text-sm text-muted-foreground uppercase tracking-widest">
             Pipelines
           </h3>
-          <Button variant="ghost" size="icon" className="h-5 w-5 hover:text-signal" asChild>
-            <Link href="/projects/new" aria-label="Add pipeline">
-              <Plus className="h-3 w-3" />
-            </Link>
-          </Button>
+          <Link href="/projects/new" aria-label="Add pipeline" className={buttonVariants({ variant: "ghost", size: "icon", className: "h-5 w-5 hover:text-signal" })}>
+            <Plus className="h-3 w-3" />
+          </Link>
         </div>
 
         <ul className="space-y-0.5">
